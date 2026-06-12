@@ -82,7 +82,7 @@ agnes
 
 # CLI 直接调用
 agnes text chat --prompt "Hello"
-agnes image generate --prompt "A cat" --size 1920x1080 --output ./01.jpg
+agnes image generate --prompt "A cat" --size 1280x720 --output ./01.jpg
 agnes video create --prompt "Sunset" --frames 121
 agnes config view
 ```
