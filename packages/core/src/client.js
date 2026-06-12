@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 const https = require('https');
 
-// Keep-alive agents to avoid socket hang up on long requests
+// Agent for file downloads only (short connections, ok to reuse)
 const httpAgent = new http.Agent({ keepAlive: true, keepAliveMsecs: 30000 });
 const httpsAgent = new https.Agent({ keepAlive: true, keepAliveMsecs: 30000 });
 
@@ -13,15 +13,17 @@ class AgnesClient {
     this.apiKey = config.apiKey;
     this.baseUrl = (config.baseUrl || 'https://apihub.agnes-ai.com/v1').replace(/\/$/, '');
 
+    // Main axios instance — NO keepAlive.
+    // Long-running requests (image 1920x1080 takes 5–10 min) must NOT reuse
+    // stale sockets. The server (or intermediate proxy) will close idle
+    // connections, and keepAlive pools the dead socket → "socket hang up".
     this.http = axios.create({
       baseURL: this.baseUrl,
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
-      timeout: 300000, // 5 min default
-      httpAgent,
-      httpsAgent,
+      timeout: 600000, // 10 min — large images need it
     });
 
     // Separate instance for video status query (different base URL /agnesapi).
@@ -87,7 +89,7 @@ class AgnesClient {
     }
 
     const { data } = await this.http.post('/images/generations', body, {
-      timeout: 600000, // 10 min for large images
+      timeout: 900000, // 15 min — 1920×1080 can need 5–10 min on the server
     });
     return data;
   }
