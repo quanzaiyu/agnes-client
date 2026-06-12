@@ -1,0 +1,16 @@
+{
+  "name": "@agnes/webui",
+  "version": "1.0.0",
+  "description": "Agnes AI WebUI - visual web interface",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "@agnes/core": "*",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5"
+  }
+}

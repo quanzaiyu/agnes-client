@@ -1,0 +1,22 @@
+{
+  "name": "agnes-client",
+  "version": "1.0.0",
+  "description": "Agnes AI API client with TUI and WebUI",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=packages/webui",
+    "dev:tui": "npm run dev --workspace=packages/tui",
+    "build": "npm run build --workspaces",
+    "scrape-docs": "node tools/scrape.js",
+    "fix-docs": "node tools/fix-markdown.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.44.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
