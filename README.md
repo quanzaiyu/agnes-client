@@ -47,17 +47,15 @@ cp agnes.config.example.json agnes.config.json
 ```bash
 # 直接运行
 npm run dev:tui
-
-# 或进入 packages/tui 目录运行
-cd packages/tui && node src/cli.js
 ```
 
 ### 4. 启动 WebUI
 
 ```bash
 npm run dev:web
-# 然后在浏览器打开 http://localhost:3000
 ```
+
+然后在浏览器打开 http://localhost:3000
 
 ---
 
@@ -70,7 +68,6 @@ Agnes TUI 支持两种模式：**交互式 TUI** 和 **CLI 命令行**。
 ### 全局安装
 
 ```bash
-cd packages/tui
 npm link
 ```
 
