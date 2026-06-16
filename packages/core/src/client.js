@@ -1,14 +1,14 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
-const https = require('https');
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
+import https from 'https';
 
 // Agent for file downloads only (short connections, ok to reuse)
 const httpAgent = new http.Agent({ keepAlive: true, keepAliveMsecs: 30000 });
 const httpsAgent = new https.Agent({ keepAlive: true, keepAliveMsecs: 30000 });
 
-class AgnesClient {
+export class AgnesClient {
   constructor(config) {
     this.apiKey = config.apiKey;
     this.baseUrl = (config.baseUrl || 'https://apihub.agnes-ai.com/v1').replace(/\/$/, '');
@@ -224,7 +224,7 @@ class AgnesClient {
       fs.mkdirSync(path.dirname(destPath), { recursive: true });
       const file = fs.createWriteStream(destPath);
 
-      const protocol = url.startsWith('https') ? https : require('http');
+      const protocol = url.startsWith('https') ? https : http;
       protocol.get(url, { agent: url.startsWith('https') ? httpsAgent : httpAgent }, response => {
         if (response.statusCode !== 200) {
           reject(new Error(`HTTP ${response.statusCode}`));
@@ -245,5 +245,3 @@ class AgnesClient {
     return destPath;
   }
 }
-
-module.exports = { AgnesClient };

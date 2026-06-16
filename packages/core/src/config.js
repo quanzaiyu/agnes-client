@@ -1,6 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const CONFIG_PATHS = [
   path.resolve(process.cwd(), 'agnes.config.json'),
@@ -12,7 +16,7 @@ const DEFAULT_CONFIG = {
   baseUrl: 'https://apihub.agnes-ai.com/v1',
 };
 
-function loadConfig() {
+export function loadConfig() {
   for (const p of CONFIG_PATHS) {
     if (fs.existsSync(p)) {
       try {
@@ -26,7 +30,7 @@ function loadConfig() {
   return { ...DEFAULT_CONFIG };
 }
 
-function saveConfig(config, location = 'local') {
+export function saveConfig(config, location = 'local') {
   const target = location === 'global'
     ? CONFIG_PATHS[1]
     : CONFIG_PATHS[0];
@@ -35,4 +39,4 @@ function saveConfig(config, location = 'local') {
   return target;
 }
 
-module.exports = { loadConfig, saveConfig, CONFIG_PATHS, DEFAULT_CONFIG };
+export { CONFIG_PATHS, DEFAULT_CONFIG };

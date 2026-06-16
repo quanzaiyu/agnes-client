@@ -3,3 +3,5 @@ output
 agnes.config.json
 .workbuddy/
 .omc/
+data/agnes.db
+cookies.txt

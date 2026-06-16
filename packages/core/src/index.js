@@ -1,4 +1,4 @@
-const { AgnesClient } = require('./client');
-const { loadConfig, saveConfig } = require('./config');
+import { AgnesClient } from './client.js';
+import { loadConfig, saveConfig } from './config.js';
 
-module.exports = { AgnesClient, loadConfig, saveConfig };
+export { AgnesClient, loadConfig, saveConfig };

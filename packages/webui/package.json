@@ -1,13 +1,6 @@
 {
   "name": "@agnes/webui",
   "version": "1.0.0",
-  "description": "Agnes AI WebUI - visual web interface",
-  "main": "src/server.js",
-  "scripts": {
-    "dev": "node src/server.js",
-    "start": "node src/server.js"
-  },
-  "dependencies": {
-    "@agnes/core": "*"
-  }
+  "description": "Agnes AI WebUI",
+  "type": "module"
 }
