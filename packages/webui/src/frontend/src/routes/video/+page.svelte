@@ -95,18 +95,18 @@
 </script>
 
 <div class="max-w-4xl mx-auto">
-  <h1 class="text-xl font-bold mb-6">视频生成</h1>
+  <h1 class="text-xl font-700 mb-6 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">视频生成</h1>
 
   <div class="card mb-6">
-    <h2 class="text-lg font-semibold mb-4">生成设置</h2>
+    <h2 class="text-lg font-700 mb-4 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">生成设置</h2>
 
     <div class="space-y-4">
       <div>
-        <label class="block text-sm text-gray-400 mb-1.5">生成模式</label>
+        <label class="block text-sm text-[#5f5c6e] mb-2">生成模式</label>
         <div class="flex gap-2">
           {#each modes as m}
             <button
-              class="px-4 py-2 rounded-lg border transition-all {mode === m.id ? 'bg-primary-500/20 border-primary-500 text-primary-400' : 'border-border hover:border-gray-500'}"
+              class="px-4 py-2 rounded-lg border transition-all {mode === m.id ? 'bg-[#ffe228] border-[#130e30] text-[#130e30]' : 'border-[#130e30]/30 text-[#5f5c6e] hover:border-[#130e30] hover:text-[#130e30]'}"
               on:click={() => mode = m.id}
             >
               {m.name}
@@ -116,7 +116,7 @@
       </div>
 
       <div>
-        <label class="block text-sm text-gray-400 mb-1.5">视频描述</label>
+        <label class="block text-sm text-[#5f5c6e] mb-2">视频描述</label>
         <textarea
           bind:value={prompt}
           class="input-base resize-none"
@@ -127,7 +127,7 @@
 
       {#if mode === 'img2video'}
         <div>
-          <label class="block text-sm text-gray-400 mb-1.5">参考图片（URL）</label>
+          <label class="block text-sm text-[#5f5c6e] mb-2">参考图片（URL）</label>
           <input
             type="text"
             bind:value={imageUrl}
@@ -138,7 +138,7 @@
       {/if}
 
       <div>
-        <label class="block text-sm text-gray-400 mb-1.5">视频尺寸</label>
+        <label class="block text-sm text-[#5f5c6e] mb-2">视频尺寸</label>
         <select bind:value={size} class="input-base">
           {#each sizes as s}
             <option value={s.id}>{s.name}</option>
@@ -165,9 +165,9 @@
   <!-- Result Panel -->
   <div class="card">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-semibold">生成结果</h2>
+      <h2 class="text-lg font-700 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">生成结果</h2>
       {#if polling}
-        <span class="text-sm text-yellow-400 flex items-center gap-2">
+        <span class="text-sm text-[#130e30] flex items-center gap-2">
           <span class="i-ph-spinner animate-spin"></span>
           生成中: {progress}%
         </span>
@@ -179,7 +179,7 @@
         <video
           src={result.video_url}
           controls
-          class="w-full rounded-xl bg-black"
+          class="w-full rounded-[24px] bg-[#130e30]"
         ></video>
         <div class="flex gap-2">
           <a href={result.video_url} download class="btn-primary flex-1 text-center">
@@ -193,30 +193,30 @@
         </div>
       </div>
     {:else if result}
-      <div class="aspect-video bg-surface-200 rounded-xl flex items-center justify-center">
+      <div class="aspect-video bg-[#f9fbf2] rounded-[24px] flex items-center justify-center">
         <div class="text-center">
           {#if polling}
             <div class="mb-4">
-              <div class="w-32 h-2 bg-surface-300 rounded-full overflow-hidden mx-auto">
+              <div class="w-32 h-2 bg-[#eff2e5] rounded-full overflow-hidden mx-auto">
                 <div
-                  class="h-full bg-gradient-to-r from-primary-600 to-primary-400 transition-all"
+                  class="h-full bg-[#ffe228] transition-all"
                   style="width: {progress}%"
                 ></div>
               </div>
-              <p class="text-gray-400 mt-2">{progress}%</p>
+              <p class="text-[#5f5c6e] mt-2">{progress}%</p>
             </div>
-            <span class="i-ph-spinner animate-spin text-4xl text-primary-400 mb-2 block"></span>
-            <p class="text-gray-400">视频生成中，请稍候...</p>
-            <p class="text-xs text-gray-500 mt-2">这可能需要几分钟时间</p>
+            <span class="i-ph-spinner animate-spin text-4xl text-[#130e30] mb-2 block"></span>
+            <p class="text-[#5f5c6e]">视频生成中，请稍候...</p>
+            <p class="text-xs text-[#5f5c6e] mt-2">这可能需要几分钟时间</p>
           {:else}
-            <span class="i-ph-video-camera text-4xl text-gray-500 mb-2 block"></span>
-            <p class="text-gray-500">等待生成...</p>
+            <span class="i-ph-video-camera text-4xl text-[#5f5c6e] mb-2 block"></span>
+            <p class="text-[#5f5c6e]">等待生成...</p>
           {/if}
         </div>
       </div>
     {:else}
-      <div class="aspect-video bg-surface-200 rounded-xl flex items-center justify-center">
-        <div class="text-center text-gray-500">
+      <div class="aspect-video bg-[#f9fbf2] rounded-[24px] flex items-center justify-center">
+        <div class="text-center text-[#5f5c6e]">
           <span class="i-ph-video-camera text-4xl mb-2 block"></span>
           <p>生成的视频将显示在这里</p>
         </div>
@@ -226,11 +226,11 @@
 
   <!-- Tips -->
   <div class="card mt-6">
-    <h3 class="font-semibold mb-2 flex items-center gap-2">
-      <span class="i-ph-lightbulb text-yellow-400"></span>
+    <h3 class="font-700 text-[#130e30] mb-2 flex items-center gap-2" style="font-family: var(--font-hedvig-letters-serif)">
+      <span class="i-ph-lightbulb text-[#ffe228]"></span>
       生成技巧
     </h3>
-    <ul class="text-sm text-gray-400 space-y-1">
+    <ul class="text-sm text-[#5f5c6e] space-y-1">
       <li>• 视频描述应该描述镜头运动、场景变化等动态内容</li>
       <li>• 使用图片转视频模式可以获得更可控的结果</li>
       <li>• 高清模式生成时间更长，但质量更好</li>

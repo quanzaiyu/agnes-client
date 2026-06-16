@@ -102,18 +102,18 @@
   }));
 </script>
 
-<div class="flex flex-col h-[calc(100vh-48px)]">
+<div class="flex flex-col h-[calc(100vh-64px)]">
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">
     <div class="flex items-center gap-4">
-      <h1 class="text-xl font-bold">文本生成</h1>
-      <select bind:value={model} class="bg-surface-200 border border-border rounded-lg px-3 py-1.5 text-sm">
+      <h1 class="text-xl font-700 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">文本生成</h1>
+      <select bind:value={model} class="bg-[#eff2e5] border border-[#130e30]/20 rounded-[12px] px-4 py-2 text-sm text-[#130e30]">
         {#each models as m}
           <option value={m.id}>{m.name}</option>
         {/each}
       </select>
-      <label class="flex items-center gap-2 text-sm text-gray-400">
-        <input type="checkbox" bind:checked={thinking} class="rounded" />
+      <label class="flex items-center gap-2 text-sm text-[#5f5c6e] cursor-pointer">
+        <input type="checkbox" bind:checked={thinking} class="rounded border-[#130e30]/30 accent-[#ffe228]" />
         深度思考
       </label>
     </div>
@@ -128,26 +128,26 @@
     {#each renderedMessages as msg, i}
       {#if msg.role !== 'system'}
         <div class="flex gap-3 {msg.role === 'user' ? 'flex-row-reverse' : ''}">
-          <div class="w-8 h-8 rounded-lg bg-surface-300 flex items-center justify-center flex-shrink-0">
+          <div class="w-10 h-10 rounded-full bg-[#130e30] flex items-center justify-center flex-shrink-0">
             {#if msg.role === 'user'}
-              <span class="text-sm">{$user?.nickname?.[0] || $user?.username?.[0] || 'U'}</span>
+              <span class="text-sm text-[#ffe228]">{$user?.nickname?.[0] || $user?.username?.[0] || 'U'}</span>
             {:else}
-              <span class="text-sm">A</span>
+              <span class="text-sm text-[#ffe228]">A</span>
             {/if}
           </div>
-          <div class="max-w-[70%] {msg.role === 'user' ? 'bg-primary-500/20 border border-primary-500/30' : 'bg-surface-100 border border-border'} rounded-xl p-4">
+          <div class="max-w-[70%] {msg.role === 'user' ? 'bg-[#ffe228]' : 'bg-[#eff2e5]'} rounded-[24px] p-4 border border-[#130e30]/10">
             {#if msg.role === 'assistant'}
-              <div class="markdown-content prose prose-invert max-w-none text-sm">{@html msg.html}</div>
+              <div class="markdown-content text-sm">{@html msg.html}</div>
               {#if msg.content}
                 <button
-                  class="mt-2 text-xs text-gray-500 hover:text-gray-300"
+                  class="mt-2 text-xs text-[#5f5c6e] hover:text-[#130e30] transition-colors"
                   on:click={() => copyContent(msg.content)}
                 >
                   <span class="i-ph-copy mr-1"></span>复制
                 </button>
               {/if}
             {:else}
-              <p class="text-sm">{msg.content}</p>
+              <p class="text-sm text-[#130e30]">{msg.content}</p>
             {/if}
           </div>
         </div>
@@ -156,11 +156,11 @@
 
     {#if loading}
       <div class="flex gap-3">
-        <div class="w-8 h-8 rounded-lg bg-surface-300 flex items-center justify-center flex-shrink-0">
-          <span class="text-sm">A</span>
+        <div class="w-10 h-10 rounded-full bg-[#130e30] flex items-center justify-center flex-shrink-0">
+          <span class="text-sm text-[#ffe228]">A</span>
         </div>
-        <div class="bg-surface-100 border border-border rounded-xl p-4">
-          <span class="i-ph-spinner animate-spin text-xl text-primary-400"></span>
+        <div class="bg-[#eff2e5] rounded-[24px] p-4 border border-[#130e30]/10">
+          <span class="i-ph-spinner animate-spin text-xl text-[#130e30]"></span>
         </div>
       </div>
     {/if}
@@ -171,7 +171,7 @@
     <form on:submit|preventDefault={sendMessage} class="flex gap-3">
       <textarea
         bind:value={input}
-        class="flex-1 bg-surface-200 border border-border rounded-lg px-4 py-3 text-white placeholder-gray-500 resize-none focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+        class="flex-1 bg-[#ffffff] border border-[#130e30] rounded-[24px] px-4 py-3 text-[#130e30] placeholder-[#5f5c6e] resize-none focus:outline-none focus:ring-2 focus:ring-[#ffe228]"
         rows="2"
         placeholder="输入您的问题..."
         disabled={loading}
@@ -188,7 +188,7 @@
             发送
           </button>
         {/if}
-        <span class="text-xs text-gray-500 text-center">消耗 1 积分</span>
+        <span class="text-xs text-[#5f5c6e] text-center">消耗 1 积分</span>
       </div>
     </form>
   </div>

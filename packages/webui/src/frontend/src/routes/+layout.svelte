@@ -22,14 +22,81 @@
   $: needsSidebar = !authPages.includes($page.url.pathname);
 </script>
 
-<div class="flex min-h-screen bg-surface">
-  {#if needsSidebar && $user}
-    <Sidebar />
+<svelte:head>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</svelte:head>
+
+<div class="app-container">
+  <!-- Decorative blobs for auth pages -->
+  {#if !needsSidebar}
+    <div class="decorative-blobs">
+      <div class="blob-green"></div>
+      <div class="blob-pink"></div>
+      <div class="blob-yellow"></div>
+    </div>
   {/if}
 
-  <main class="flex-1 {$page.url.pathname === '/' ? '' : 'p-6'}">
-    <slot />
-  </main>
+  {#if needsSidebar && $user}
+    <aside class="sidebar">
+      <Sidebar />
+    </aside>
+  {/if}
+
+  <div class="content-wrapper">
+    <main class="content {$page.url.pathname === '/' ? '' : 'with-padding'}">
+      <slot />
+    </main>
+  </div>
 </div>
 
 <Toast />
+
+<style>
+  :global(html, body) {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    background-color: #f9fbf2;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    flex-shrink: 0;
+    width: 256px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #eff2e5;
+  }
+
+  .content-wrapper {
+    flex: 1;
+    min-width: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    flex: 1;
+    background-color: #f9fbf2;
+    overflow-y: auto;
+  }
+
+  .content.with-padding {
+    padding: 32px;
+  }
+</style>

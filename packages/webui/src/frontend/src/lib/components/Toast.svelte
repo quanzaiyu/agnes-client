@@ -7,21 +7,21 @@
     info: 'i-ph-info'
   };
 
+  // Updated colors for Ditto light theme
   const colors = {
-    success: 'text-green-400 bg-green-400/10 border-green-400/30',
-    error: 'text-red-400 bg-red-400/10 border-red-400/30',
-    info: 'text-blue-400 bg-blue-400/10 border-blue-400/30'
+    success: 'text-[#130e30] bg-[#eff2e5] border border-[#59e25d]',
+    error: 'text-[#130e30] bg-[#eff2e5] border border-[#e261e5]',
+    info: 'text-[#130e30] bg-[#eff2e5] border border-[#5046e4]'
   };
 </script>
 
-<div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
   {#each $toasts as toast (toast.id)}
     <div
-      class="flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-sm
-        animate-pulse {colors[toast.type] || colors.info}"
+      class="flex items-center gap-3 px-5 py-3.5 rounded-lg shadow-lg animate-pulse {colors[toast.type] || colors.info}"
     >
       <span class="{icons[toast.type] || icons.info} text-xl"></span>
-      <span class="text-sm font-medium">{toast.message}</span>
+      <span class="text-sm font-400 text-[#130e30]">{toast.message}</span>
     </div>
   {/each}
 </div>

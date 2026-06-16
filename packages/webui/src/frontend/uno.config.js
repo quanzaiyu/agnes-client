@@ -10,54 +10,52 @@ export default defineConfig({
     presetWebFonts({
       fonts: {
         sans: 'Inter:400,500,600,700',
-        mono: 'JetBrains Mono:400,500'
+        serif: 'Hedvig Letters Serif:400,700'
       }
     })
   ],
   theme: {
     colors: {
-      primary: {
-        DEFAULT: '#8B5CF6',
-        50: '#F5F3FF',
-        100: '#EDE9FE',
-        200: '#DDD6FE',
-        300: '#C4B5FD',
-        400: '#A78BFA',
-        500: '#8B5CF6',
-        600: '#7C3AED',
-        700: '#6D28D9',
-        800: '#5B21B6',
-        900: '#4C1D95'
-      },
-      surface: {
-        DEFAULT: '#0F0F14',
-        50: '#FAFAFA',
-        100: '#1A1A24',
-        200: '#252532',
-        300: '#303040',
-        400: '#404050'
-      },
-      border: {
-        DEFAULT: '#2A2A3A',
-        light: '#3A3A4A'
-      }
+      // Ditto Light Theme from DESIGN.md
+      'canvas': '#f9fbf2',        // Page background
+      'meadow': '#eff2e5',       // Card surface
+      'ink': '#130e30',          // Primary text, buttons
+      'yellow': '#ffe228',        // Primary CTA
+      'green': '#59e25d',        // Success, decorative
+      'fuchsia': '#e261e5',      // Decorative
+      'slate': '#5f5c6e',        // Secondary text
+      'pearl': '#ffffff',         // White
+      'violet': '#5046e4',       // Secondary accent
     }
   },
   shortcuts: {
-    'btn-primary': 'bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
-    'btn-secondary': 'bg-surface-200 text-white font-medium px-4 py-2 rounded-lg hover:bg-surface-300 transition-all duration-200 cursor-pointer border border-border',
-    'btn-ghost': 'text-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-surface-200 transition-all duration-200 cursor-pointer',
-    'card': 'bg-surface-100 border border-border rounded-xl p-5',
-    'card-hover': 'bg-surface-100 border border-border rounded-xl p-5 hover:border-primary-500/50 transition-all duration-200',
-    'input-base': 'w-full bg-surface-200 border border-border rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all',
-    'link': 'text-primary-400 hover:text-primary-300 transition-colors'
+    // Base
+    'page': 'bg-canvas text-ink min-h-screen',
+
+    // Cards - 24px radius, soft surface
+    'card': 'bg-meadow rounded-[24px] p-6 border border-ink/10',
+    'card-hover': 'bg-meadow rounded-[24px] p-6 border border-ink/10 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer',
+
+    // Buttons - pill radius
+    'btn-primary': 'bg-yellow text-ink font-500 px-6 py-3 rounded-[1440px] hover:bg-yellow/90 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
+    'btn-secondary': 'bg-ink text-pearl font-500 px-6 py-3 rounded-[1440px] hover:bg-ink/80 transition-all cursor-pointer',
+    'btn-ghost': 'bg-transparent text-slate font-500 px-4 py-2 rounded-[1440px] border border-ink/15 hover:bg-meadow hover:text-ink transition-all cursor-pointer',
+
+    // Inputs - smaller radius
+    'input-base': 'w-full bg-pearl text-ink placeholder-slate px-4 py-3 rounded-[12px] border border-ink/20 focus:outline-none focus:ring-2 focus:ring-yellow transition-all',
+
+    // Links
+    'link': 'text-ink hover:text-slate transition-colors cursor-pointer',
+
+    // Gradient text
+    'gradient-text': 'bg-gradient-to-r from-ink to-violet bg-clip-text text-transparent',
+
+    // Nav
+    'nav-pill': 'bg-meadow rounded-[1440px] px-6 py-2',
   },
   rules: [
-    [/^gradient-text$/, () => ({
-      'background': 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 50%, #C4B5FD 100%)',
-      '-webkit-background-clip': 'text',
-      '-webkit-text-fill-color': 'transparent',
-      'background-clip': 'text'
-    })]
+    // Subtle shadow
+    ['shadow-card', { 'box-shadow': '0 2px 8px rgba(19, 14, 48, 0.06)' }],
+    ['shadow-card-hover', { 'box-shadow': '0 4px 16px rgba(19, 14, 48, 0.1)' }],
   ]
 });

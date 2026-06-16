@@ -50,18 +50,18 @@
 </script>
 
 <div class="max-w-2xl mx-auto">
-  <h1 class="text-xl font-bold mb-6">个人设置</h1>
+  <h1 class="text-xl font-700 mb-6 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">个人设置</h1>
 
   <div class="space-y-6">
     <!-- Avatar -->
     <div class="card">
-      <h2 class="text-lg font-semibold mb-4">头像</h2>
+      <h2 class="text-lg font-700 mb-4 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">头像</h2>
       <div class="flex items-center gap-6">
-        <div class="w-24 h-24 rounded-full bg-surface-300 flex items-center justify-center overflow-hidden border-2 border-border">
+        <div class="w-24 h-24 rounded-full bg-[#130e30] flex items-center justify-center overflow-hidden border-4 border-[#ffe228]/30">
           {#if $user?.avatar}
             <img src={$user.avatar} alt="Avatar" class="w-full h-full object-cover" />
           {:else}
-            <span class="text-3xl">{$user?.nickname?.[0] || $user?.username?.[0] || 'U'}</span>
+            <span class="text-3xl text-[#ffe228]">{$user?.nickname?.[0] || $user?.username?.[0] || 'U'}</span>
           {/if}
         </div>
         <div>
@@ -73,7 +73,7 @@
             on:change={uploadAvatar}
           />
           <button
-            class="btn-secondary"
+            class="btn-primary"
             on:click={triggerFileInput}
             disabled={uploadingAvatar}
           >
@@ -85,40 +85,40 @@
               上传头像
             {/if}
           </button>
-          <p class="text-xs text-gray-500 mt-2">支持 JPG、PNG、GIF、WebP 格式，最大 2MB</p>
+          <p class="text-xs text-[#5f5c6e] mt-2">支持 JPG、PNG、GIF、WebP 格式，最大 2MB</p>
         </div>
       </div>
     </div>
 
     <!-- Profile -->
     <div class="card">
-      <h2 class="text-lg font-semibold mb-4">个人资料</h2>
+      <h2 class="text-lg font-700 mb-4 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">个人资料</h2>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-sm text-gray-400 mb-1.5">用户名</label>
+          <label class="block text-sm text-[#5f5c6e] mb-2">用户名</label>
           <input
             type="text"
             value={$user?.username || ''}
             class="input-base"
             disabled
           />
-          <p class="text-xs text-gray-500 mt-1">用户名不可修改</p>
+          <p class="text-xs text-[#5f5c6e] mt-1">用户名不可修改</p>
         </div>
 
         <div>
-          <label class="block text-sm text-gray-400 mb-1.5">邮箱</label>
+          <label class="block text-sm text-[#5f5c6e] mb-2">邮箱</label>
           <input
             type="email"
             value={$user?.email || ''}
             class="input-base"
             disabled
           />
-          <p class="text-xs text-gray-500 mt-1">邮箱不可修改</p>
+          <p class="text-xs text-[#5f5c6e] mt-1">邮箱不可修改</p>
         </div>
 
         <div>
-          <label class="block text-sm text-gray-400 mb-1.5">昵称</label>
+          <label class="block text-sm text-[#5f5c6e] mb-2">昵称</label>
           <input
             type="text"
             bind:value={nickname}
@@ -140,16 +140,16 @@
       </div>
     </div>
 
-    <!-- Points History -->
+    <!-- Points Info -->
     <div class="card">
-      <h2 class="text-lg font-semibold mb-4">积分记录</h2>
+      <h2 class="text-lg font-700 mb-4 text-[#130e30]" style="font-family: var(--font-hedvig-letters-serif)">积分记录</h2>
 
-      <div class="flex items-center justify-between mb-4 p-4 bg-surface-200 rounded-lg">
+      <div class="flex items-center justify-between mb-4 p-4 bg-[#f9fbf2] rounded-[24px]">
         <div>
-          <p class="text-sm text-gray-400">当前积分</p>
-          <p class="text-2xl font-bold">{$user?.points || 0}</p>
+          <p class="text-sm text-[#5f5c6e]">当前积分</p>
+          <p class="text-2xl font-700 text-[#130e30]">{$user?.points || 0}</p>
         </div>
-        <div class="text-right text-sm text-gray-500">
+        <div class="text-right text-sm text-[#5f5c6e]">
           <p>注册赠送: +100</p>
           <p>每日签到: +10/次</p>
           <p>文本/图片: -1/次</p>
@@ -157,7 +157,7 @@
         </div>
       </div>
 
-      <a href="/points" class="link text-sm">
+      <a href="/points" class="link text-sm flex items-center gap-1">
         查看全部积分记录 <span class="i-ph-arrow-right ml-1"></span>
       </a>
     </div>
