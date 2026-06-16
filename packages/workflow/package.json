@@ -1,0 +1,41 @@
+{
+  "name": "@agnes/workflow",
+  "version": "1.0.0",
+  "description": "Agnes AI Workflow Editor - ComfyUI-style drag-and-drop visual node editor",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"node server.cjs\" \"vite\"",
+    "dev:web": "vite",
+    "dev:api": "node server.cjs",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@agnes/core": "*",
+    "@xyflow/react": "^12.4.0",
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.9",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.2.4",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@unocss/preset-icons": "^66.7.2",
+    "@unocss/preset-typography": "^66.7.2",
+    "@unocss/preset-wind3": "^66.7.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.2",
+    "unocss": "^66.7.2",
+    "vite": "^6.0.5"
+  }
+}

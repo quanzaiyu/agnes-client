@@ -245,6 +245,53 @@ app.get('/api/video/status/:videoId', async (req, res) => {
   }
 });
 
+// ─── Save Output (used by SaveOutput workflow node) ──────────────────────────
+
+app.post('/api/save', async (req, res) => {
+  try {
+    const { kind, source, savePath, baseName } = req.body;
+    if (!kind || !source) return res.status(400).json({ error: 'Missing kind or source' });
+
+    const outDir = path.resolve(__dirname, '../../../output');
+    fs.mkdirSync(outDir, { recursive: true });
+
+    let ext = 'bin';
+    if (kind === 'image') ext = (source.format || 'png').replace(/^.*\./, '') || 'png';
+    if (kind === 'video') ext = 'mp4';
+    if (kind === 'text')  ext = 'md';
+
+    const filename = savePath
+      ? path.resolve(outDir, savePath)
+      : path.join(outDir, `${baseName || 'output'}-${Date.now()}.${ext}`);
+    fs.mkdirSync(path.dirname(filename), { recursive: true });
+
+    if (source.dataUri) {
+      const m = /^data:([^;]+);base64,(.*)$/.exec(source.dataUri);
+      if (!m) return res.status(400).json({ error: 'Invalid dataUri' });
+      const buf = Buffer.from(m[2], 'base64');
+      fs.writeFileSync(filename, buf);
+    } else if (source.url) {
+      const { downloadFile } = require(path.resolve(__dirname, '../../core/src/client'));
+      await downloadFile(source.url, filename);
+    } else if (kind === 'text' && source.text) {
+      fs.writeFileSync(filename, source.text, 'utf-8');
+    } else {
+      return res.status(400).json({ error: 'source must have url, dataUri, or text' });
+    }
+
+    res.json({ ok: true, path: filename });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── Video Frame Extraction (used by VideoFrameExtract node) ─────────────────
+// The browser-side resolver handles frame extraction directly via HTMLVideoElement
+// + canvas. This endpoint is reserved for server-side fallback.
+app.post('/api/video/frame', async (_req, res) => {
+  res.status(501).json({ error: 'Video frame extraction is performed client-side via canvas.' });
+});
+
 // ─── Start ───────────────────────────────────────────────────────────────────
 
 app.listen(PORT, () => {

@@ -12,6 +12,7 @@
   "scripts": {
     "dev:web": "npm run dev --workspace=packages/webui",
     "dev:tui": "npm run dev --workspace=packages/tui",
+    "dev:flow": "npm run dev --workspace=@agnes/workflow",
     "build": "npm run build --workspaces",
     "scrape-docs": "node tools/scrape.js",
     "fix-docs": "node tools/fix-markdown.js"
@@ -19,9 +20,25 @@
   "devDependencies": {
     "axios": "^1.7.2",
     "form-data": "^4.0.0",
-    "playwright": "^1.44.0"
+    "playwright": "^1.44.0",
+    "@iconify-json/carbon": "^1.2.4",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@unocss/preset-icons": "^66.7.2",
+    "@unocss/preset-typography": "^66.7.2",
+    "@unocss/preset-wind3": "^66.7.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "unocss": "^66.7.2",
+    "vite": "^6.0.5"
   },
   "dependencies": {
+    "@xyflow/react": "^12.4.0",
+    "nanoid": "^5.0.9",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.2",
     "@inquirer/prompts": "^5.3.8",
     "express": "^4.19.2",
     "multer": "^1.4.5-lts.1",
