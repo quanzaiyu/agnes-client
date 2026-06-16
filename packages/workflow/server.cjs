@@ -47,6 +47,15 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '200mb' }));
 
+// Serve built static files from dist directory
+const distPath = path.join(__dirname, 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+} else {
+  // Fallback to source directory during development
+  app.use(express.static(__dirname));
+}
+
 // ─── Helpers (duplicated from webui for self-containment) ────────────────────
 
 function isDataUri(str) { return typeof str === 'string' && str.startsWith('data:'); }
@@ -221,6 +230,13 @@ app.post('/api/save', async (req, res) => {
 });
 
 // ─── Start ───────────────────────────────────────────────────────────────────
+
+// Serve index.html for all other routes (SPA support)
+app.get('*', (_req, res) => {
+  const distIndex = path.join(__dirname, 'dist', 'index.html');
+  const srcIndex = path.join(__dirname, 'index.html');
+  res.sendFile(fs.existsSync(distIndex) ? distIndex : srcIndex);
+});
 
 app.listen(PORT, () => {
   console.log(`\n  Agnes workflow API running at http://localhost:${PORT}\n`);

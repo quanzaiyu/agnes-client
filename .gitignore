@@ -1,7 +1,75 @@
-node_modules
-output
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.output/
+.packages/
+
+# SvelteKit
+.svelte-kit/
+
+# Vite
+.vite/
+
+# UnoCSS / Tailwind cache
+.cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Agnes config (contains API keys)
 agnes.config.json
-.workbuddy/
-.omc/
-data/agnes.db
+Agnes.db
+
+# Cookies / sessions
 cookies.txt
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Output directory
+output/
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.iml
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Volta (Node version manager)
+.volta/
+
+# Worktrees (OMC)
+.workbuddy/
+.claude/worktrees/
+
+# OMC (oh-my-claudecode)
+.omc/
+
+# Test coverage
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# pnpm lockfile (use npm-shrinkwrap.json if needed)
+pnpm-lock.yaml
