@@ -1,31 +1,30 @@
 # Agnes AI Client
 
-基于 [Agnes AI](https://agnes-ai.com) API 的客户端工具，支持 **TUI（终端交互）** 和 **WebUI（网页界面）** 两种使用方式。
+基于 [Agnes AI](https://agnes-ai.com) API 的多端客户端工具集，支持 **TUI（终端交互）**、**WebUI（网页界面）**、**Workflow（可视化工作流）** 和 **Loader（命令行工作流运行器）** 四种使用方式。
 
 ---
 
-## 功能特性
+## 📦 Packages 概览
 
-- **文本生成**：多轮对话、图片理解、工具调用、Thinking 模式、流式输出
-- **图像生成**：文生图、图生图、多图合成，支持多种尺寸和风格预设
-- **视频生成**：文生视频、图生视频、多图视频、关键帧动画（异步轮询）
-- **统一配置文件**：`agnes.config.json`，保存 API Key 和 Base URL
-- **TUI**：全交互式终端菜单，支持全局安装为 `agnes` 命令
-- **WebUI**：浏览器界面，操作直观，支持文件上传和实时流式输出
+| Package | 说明 | 技术栈 | 入口命令 |
+|---------|------|--------|----------|
+| `@agnes/core` | 核心 SDK，API 客户端封装 | Node.js ESM | - |
+| `@agnes/tui` | 终端交互界面（TUI） | Node.js + Inquirer | `npm run dev:tui` |
+| `@agnes/webui` | 网页界面（WebUI） | SvelteKit + Express + SQLite | `npm run dev:webui` |
+| `@agnes/workflow` | 可视化工作流编辑器 | React + ReactFlow | `npm run dev:flow` |
+| `@agnes/loader` | 命令行工作流运行器 | Node.js + Commander | `agnes-flow run <file>` |
 
 ---
 
-## 快速开始
+## 🚀 快速开始
 
 ### 1. 安装依赖
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. 配置 API Key
-
-复制配置文件示例并填写你的 API Key：
 
 ```bash
 cp agnes.config.example.json agnes.config.json
@@ -40,266 +39,200 @@ cp agnes.config.example.json agnes.config.json
 }
 ```
 
-> 也可以在 TUI 或 WebUI 启动后通过界面配置。
-
-### 3. 启动 TUI
+### 3. 启动各模块
 
 ```bash
-# 直接运行
+# 启动 WebUI（推荐）
+npm run dev:webui
+
+# 启动 TUI
+npm run dev:tui
+
+# 启动 Workflow 编辑器
+npm run dev:flow
+```
+
+---
+
+## 🎯 各模块使用
+
+### WebUI - 网页界面
+
+**技术栈**: SvelteKit + Express + UnoCSS + SQLite
+
+**访问地址**: http://localhost:5173
+
+**功能**:
+- 用户注册/登录系统
+- 积分系统（注册送 100，每日签到 +10）
+- 文本生成（流式输出、Markdown 渲染）
+- 图片生成（多尺寸支持、预览下载）
+- 视频生成（进度轮询、在线播放）
+- 个人设置（修改昵称、上传头像）
+
+```bash
+npm run dev:webui    # 开发模式（后端 + 前端）
+npm run build        # 构建生产版本
+npm start            # 运行生产版本
+```
+
+### TUI - 终端界面
+
+**技术栈**: Node.js + Inquirer + Chalk
+
+**功能**:
+- 全交互式菜单
+- 文本对话（支持图片理解、Thinking 模式）
+- 图片生成（多种风格预设）
+- 视频生成（文生视频、图生视频）
+- 配置管理
+
+```bash
 npm run dev:tui
 ```
 
-### 4. 启动 WebUI
+### Workflow - 可视化工作流
+
+**技术栈**: React + @xyflow/react + Zustand + UnoCSS
+
+**功能**:
+- 拖拽式节点编辑
+- 预置工作流模板
+- 自定义节点扩展
+- 与 Loader 无缝集成
 
 ```bash
-npm run dev:web
+npm run dev:flow
 ```
 
-然后在浏览器打开 http://localhost:3000
+### Loader - 命令行运行器
 
----
+**技术栈**: Node.js + Commander + Express
 
-## 使用方式
-
-Agnes TUI 支持两种模式：**交互式 TUI** 和 **CLI 命令行**。
-
----
-
-### 全局安装
+**功能**:
+- 从 JSON/Flow 文件加载并执行工作流
+- HTTP API 服务模式
+- CLI 直接调用
 
 ```bash
-npm link
+# 执行工作流文件
+pnpm exec agnes-flow run workflow.json
+
+# 或全局安装后
+agnes-flow run workflow.json
+
+# 启动 HTTP 服务
+pnpm exec agnes-flow serve --port 3000
 ```
 
-安装后可在任意目录使用 `agnes` 命令：
+### Core - 核心 SDK
 
-```bash
-# 交互式 TUI（菜单驱动）
-agnes
+**技术栈**: Node.js ESM
 
-# CLI 直接调用
-agnes text chat --prompt "Hello"
-agnes image generate --prompt "A cat" --size 1280x720 --output ./01.jpg
-agnes video create --prompt "Sunset" --frames 121
-agnes config view
-```
+作为底层依赖被其他模块使用，提供：
 
----
+```javascript
+import { AgnesClient, loadConfig, saveConfig } from '@agnes/core';
 
-### CLI 命令参考
+// 创建客户端
+const client = new AgnesClient({
+  apiKey: 'your-api-key',
+  baseUrl: 'https://apihub.agnes-ai.com/v1'
+});
 
-```
-agnes [<category> [<action>]] [options]
-```
+// 文本对话
+const result = await client.chat({
+  model: 'agnes-2.0-flash',
+  messages: [{ role: 'user', content: 'Hello!' }]
+});
 
-#### 文本生成 — `agnes text chat`
+// 图片生成
+const image = await client.generateImage({
+  model: 'agnes-image-2.1-flash',
+  prompt: 'A beautiful sunset',
+  size: '1024x1024'
+});
 
-| 选项              | 说明                          | 默认值            |
-| ----------------- | ----------------------------- | ----------------- |
-| `--prompt <text>` | **必填**，提问内容            | —                 |
-| `--system <text>` | System Prompt（可选）         | —                 |
-| `--model <id>`    | 模型 ID                       | `agnes-2.0-flash` |
-| `--image <url>`   | 图片 URL（开启 Vision 模式）  | —                 |
-| `--thinking`      | 开启深度推理（Thinking 模式） | off               |
-| `--tools`         | 启用工具调用演示              | off               |
-| `--summary`       | 从 stdin 读取文本进行摘要     | off               |
-| `--no-stream`     | 禁用流式输出，等待完整结果    | off（默认流式）   |
-| `--output <path>` | 保存输出到文件                | —                 |
-
-```bash
-# 基础对话
-agnes text chat --prompt "介绍一下量子计算"
-
-# 带 System Prompt
-agnes text chat --system "你是一个 Python 专家" --prompt "怎么用 asyncio"
-
-# 图片理解
-agnes text chat --image https://example.com/photo.jpg --prompt "描述这张图"
-
-# 文档摘要（从 stdin 读取）
-cat document.txt | agnes text chat --summary --output summary.md
-
-# 非流式 + 保存
-agnes text chat --prompt "写一首诗" --no-stream --output poem.md
-```
-
-#### 图像生成 — `agnes image generate`
-
-| 选项                  | 说明                                                                                                 | 默认值                  |
-| --------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
-| `--prompt <text>`     | **必填**，提示词                                                                                     | —                       |
-| `--model <id>`        | 模型 ID                                                                                              | `agnes-image-2.1-flash` |
-| `--size <WxH>`        | 输出尺寸                                                                                             | `1024x1024`             |
-| `--style <name>`      | 风格预设（photorealistic / anime / cinematic / oil-painting / watercolor / 3d-render / flat-design） | 不附加风格              |
-| `--image <path\|url>` | 参考图（可重复指定用于多图合成）                                                                     | —                       |
-| `--output <path>`     | 保存路径                                                                                             | `./output.jpg`          |
-
-```bash
-# 基础文生图
-agnes image generate --prompt "a cat in a garden" --size 1920x1080
-
-# 指定风格
-agnes image generate --prompt "未来城市" --style anime --size 1280x720
-
-# 图生图（指定参考图）
-agnes image generate --prompt "enhance lighting" --image ./input.png --output enhanced.jpg
-
-# 多图合成
-agnes image generate --prompt "combine these styles" --image ./a.jpg --image ./b.jpg
-```
-
-#### 视频生成 — `agnes video create`
-
-| 选项                       | 说明                               | 默认值             |
-| -------------------------- | ---------------------------------- | ------------------ |
-| `--prompt <text>`          | **必填**，视频描述                 | —                  |
-| `--model <id>`             | 模型 ID                            | `agnes-video-v2.0` |
-| `--size <WxH>`             | 视频尺寸                           | `1216x832`         |
-| `--frames <n>`             | 帧数（81/121/241/441）             | `121`              |
-| `--fps <n>`                | 帧率                               | `24`               |
-| `--image <path\|url>`      | 参考图（图生视频）                 | —                  |
-| `--mode <name>`            | 模式（`keyframes` 关键帧动画）     | 默认               |
-| `--negative-prompt <text>` | 负向提示词（排除不希望出现的内容） | —                  |
-| `--output <path>`          | 保存路径                           | `./output.mp4`     |
-
-```bash
-# 基础文生视频
-agnes video create --prompt "sunset over the ocean" --size 1216x832 --frames 121 --fps 24
-
-# 自定义参数
-agnes video create --prompt "城市夜景航拍" --size 1088x640 --frames 241 --fps 30
-
-# 图生视频
-agnes video create --prompt "animate this landscape" --image ./photo.jpg
-
-# 关键帧动画
-agnes video create --prompt "smooth morphing" --image ./a.jpg --image ./b.jpg --mode keyframes
-```
-
-#### 配置管理 — `agnes config`
-
-| 操作                             | 说明          |
-| -------------------------------- | ------------- |
-| `agnes config view`              | 查看当前配置  |
-| `agnes config set-apikey <key>`  | 设置 API Key  |
-| `agnes config set-baseurl <url>` | 设置 Base URL |
-
----
-
-### TUI 交互模式
-
-直接运行 `agnes`（无参数）进入交互式菜单：
-
-```
-选择生成方式：
-  💬 文本 / 对话
-  🎨 图像生成
-  🎬 视频生成
-  ⚙️  配置管理
-  🚪 退出
-```
-
-通过方向键和回车键选择操作，各子功能与 CLI 模式对应：
-
-- **文本**：对话 / 图片理解 / 工具调用 / Thinking / 摘要
-- **图像**：文生图 / 图生图 / 多图合成，选择尺寸、风格、保存路径
-- **视频**：文生视频 / 图生视频 / 多图视频 / 关键帧动画，选择尺寸、帧数、FPS
-- **配置**：查看 / 修改 API Key / 修改 Base URL
-
----
-
-## WebUI 使用说明
-
-启动后在浏览器打开 `http://localhost:3000`：
-
-| 面板     | 功能                                         |
-| -------- | -------------------------------------------- |
-| 文本对话 | 流式多轮对话，支持图片理解、Thinking 模式    |
-| 图像生成 | 文生图/图生图，支持本地文件上传，预览并下载  |
-| 视频生成 | 提交视频任务，实时进度条，生成完成后在线播放 |
-
-点击左下角 **⚙️ API 配置** 设置 API Key。
-
----
-
-## 文档工具
-
-### 重新爬取文档
-
-```bash
-npm run scrape-docs
-```
-
-首次使用需要安装 Playwright 的 Chromium（如果尚未安装）：
-
-```bash
-npx playwright install chromium
-```
-
-### 格式修复
-
-```bash
-npm run fix-docs
+// 视频生成
+const video = await client.createVideo({
+  model: 'agnes-video-v2.0',
+  prompt: 'A cat walking',
+  width: 1216,
+  height: 832
+});
 ```
 
 ---
 
-## 项目结构
+## 📁 项目结构
 
 ```
 agnes-client/
-├── agnes.config.json          # 配置文件（需自行创建，不提交到 git）
-├── agnes.config.example.json  # 配置文件示例
-├── package.json               # 根 package.json（workspaces）
-├── docs/                      # 爬取的 Agnes AI 文档
-│   ├── 01_模型/
-│   ├── 02_产品/
-│   └── 03_公司/
-├── tools/                     # 文档工具脚本
-│   ├── scrape.js              # 文档爬取脚本
-│   └── fix-markdown.js        # Markdown 格式修复脚本
+├── package.json              # 统一依赖管理
+├── pnpm-workspace.yaml       # 工作空间配置
+├── agnes.config.json         # API 配置（需手动创建）
+├── data/                     # SQLite 数据库 + 用户上传
+│   ├── agnes.db             # 用户数据、积分、生成记录
+│   └── avatars/             # 用户头像
 └── packages/
-    ├── core/                  # 核心 SDK（API 客户端）
+    ├── core/                # 核心 SDK
     │   └── src/
-    │       ├── client.js      # AgnesClient 类
-    │       ├── config.js      # 配置加载/保存
-    │       └── index.js
-    ├── tui/                   # 终端交互界面
+    │       ├── client.js   # AgnesClient 类
+    │       ├── config.js   # 配置管理
+    │       └── index.js     # 导出
+    ├── tui/                 # 终端界面
     │   └── src/
-    │       └── cli.js         # TUI 主程序
-    └── webui/                 # 网页界面
-        ├── src/
-        │   └── server.js      # Express 后端
-        └── public/
-            └── index.html     # 前端页面
+    │       └── cli.js      # TUI 主程序
+    ├── webui/               # 网页界面
+    │   └── src/
+    │       ├── server/     # Express 后端
+    │       │   ├── index.js
+    │       │   ├── db/      # SQLite 数据库
+    │       │   ├── routes/  # API 路由
+    │       │   └── middleware/
+    │       └── frontend/   # SvelteKit 前端
+    │           └── src/
+    │               ├── routes/    # 页面路由
+    │               └── lib/       # 组件和工具
+    ├── workflow/             # 可视化工作流
+    │   ├── server.cjs      # 工作流服务
+    │   └── src/
+    └── loader/               # 命令行运行器
+        ├── bin/
+        └── src/
 ```
 
 ---
 
-## 模型参考
+## 🔧 可用模型
 
-| 类型 | 模型名称                | 特点                     |
-| ---- | ----------------------- | ------------------------ |
-| 文本 | `agnes-1.5-flash`       | 轻量高速，低成本高并发   |
-| 文本 | `agnes-2.0-flash`       | 智能体/工具调用/图片理解 |
-| 图像 | `agnes-image-2.0-flash` | 文生图/图生图/多图合成   |
-| 图像 | `agnes-image-2.1-flash` | 高信息密度优化版         |
-| 视频 | `agnes-video-v2.0`      | 文/图生视频，异步生成    |
+| 类型 | 模型 ID | 说明 |
+|------|---------|------|
+| 文本 | `agnes-1.5-flash` | 轻量高速，低成本 |
+| 文本 | `agnes-2.0-flash` | 智能体/工具调用/图片理解 |
+| 图片 | `agnes-image-2.0-flash` | 文生图/图生图/多图合成 |
+| 图片 | `agnes-image-2.1-flash` | 高信息密度优化版 |
+| 视频 | `agnes-video-v2.0` | 文/图生视频，异步生成 |
 
-API 文档：https://agnes-ai.com/doc
+API 文档: https://agnes-ai.com/doc
 
 ---
 
-## 常见问题
+## ❓ 常见问题
 
 **Q: API Key 从哪里获取？**
 前往 https://agnes-ai.com 注册账号，在控制台创建 API Key。
 
-**Q: 视频生成要多久？**
-视频生成为异步任务，约需 1-5 分钟，时长取决于 num_frames 和服务负载。
+**Q: 积分如何计算？**
+- 注册赠送: 100 积分
+- 每日签到: +10 积分
+- 文本/图片生成: -1 积分
+- 视频生成: -10 积分
 
-**Q: 图片理解支持哪些格式？**
-支持 JPG、PNG、WebP 格式的公网可访问图片 URL。
+**Q: 视频生成要多久？**
+视频生成为异步任务，约需 1-5 分钟。
 
 **Q: 如何修改端口？**
-WebUI 默认端口 3000，可通过环境变量修改：`PORT=8080 npm run dev:web`
+```bash
+PORT=8080 npm run dev:webui
+```

@@ -1,7 +1,5 @@
 {
   "name": "@agnes/tui",
   "version": "1.0.0",
-  "description": "Agnes AI TUI client",
-  "main": "src/cli.js",
-  "type": "module"
+  "private": true
 }

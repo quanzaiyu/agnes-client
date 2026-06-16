@@ -1,7 +1,25 @@
 {
   "name": "@agnes/core",
   "version": "1.0.0",
-  "description": "Agnes AI core SDK",
+  "description": "Agnes AI core SDK - API client for text, image, video generation",
   "main": "src/index.js",
-  "type": "module"
+  "module": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.js"
+    },
+    "./client": {
+      "import": "./src/client.js",
+      "require": "./src/client.js"
+    },
+    "./config": {
+      "import": "./src/config.js",
+      "require": "./src/config.js"
+    }
+  },
+  "files": [
+    "src"
+  ]
 }

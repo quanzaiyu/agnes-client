@@ -1,6 +1,6 @@
 {
   "name": "@agnes/webui",
   "version": "1.0.0",
-  "description": "Agnes AI WebUI",
+  "private": true,
   "type": "module"
 }
