@@ -8,6 +8,7 @@ import { useRunStore } from '../store/runStore';
 import { executeWorkflow } from '../engine/executeWorkflow';
 import { examples } from '../workflows/examples';
 import { SettingsDrawer } from './SettingsDrawer';
+import { ApiDialog } from './ApiDialog';
 
 export function Toolbar() {
   const runStore = useRunStore();
@@ -18,6 +19,7 @@ export function Toolbar() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
+  const [showApi, setShowApi] = useState(false);
 
   const isRunning = runStore.state === 'running';
 
@@ -115,9 +117,11 @@ export function Toolbar() {
 
       <div className="flex-1" />
 
+      <button className="btn-ghost" onClick={() => setShowApi(true)} title="将工作流导出为可调用 API">⚡ API 导出</button>
       <button className="btn-ghost" onClick={() => setShowSettings(true)}>⚙ API 设置</button>
 
       {showSettings && <SettingsDrawer onClose={() => setShowSettings(false)} />}
+      {showApi && <ApiDialog onClose={() => setShowApi(false)} />}
     </div>
   );
 }

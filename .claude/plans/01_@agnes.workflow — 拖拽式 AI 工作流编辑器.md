@@ -10,17 +10,17 @@
 
 ## 决策摘要
 
-| 维度 | 决策 |
-| --- | --- |
-| 包名 | `@agnes/workflow` |
-| 技术栈 | React 19 + TypeScript + Vite + UnoCSS（`presetWind3` + `presetIcons` + `presetTypography`） |
-| 节点图 | `@xyflow/react` v12（React Flow 12） |
-| 状态 | `zustand`（工作流 + UI 双 store） |
-| 后端 | dev: Vite proxy；prod: 在 `@agnes/webui` 的 Express 中增加 `/api/*` 反代 |
-| Core 复用 | **改造 `@agnes/core` 为双格式导出（ESM + CJS）** |
-| 图片存储 | 上传到 webui 后端 `/uploads` 目录，返回 URL，ImageGeneration 调用时由后端代理转 base64 |
-| 工作流持久化 | localStorage + 导出/导入 JSON |
-| 节点类型 | 用户列出的 8 种 + 4 种高阶节点（见下） |
+| 维度         | 决策                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| 包名         | `@agnes/workflow`                                                                           |
+| 技术栈       | React 19 + TypeScript + Vite + UnoCSS（`presetWind3` + `presetIcons` + `presetTypography`） |
+| 节点图       | `@xyflow/react` v12（React Flow 12）                                                        |
+| 状态         | `zustand`（工作流 + UI 双 store）                                                           |
+| 后端         | dev: Vite proxy；prod: 在 `@agnes/webui` 的 Express 中增加 `/api/*` 反代                    |
+| Core 复用    | **改造 `@agnes/core` 为双格式导出（ESM + CJS）**                                            |
+| 图片存储     | 上传到 webui 后端 `/uploads` 目录，返回 URL，ImageGeneration 调用时由后端代理转 base64      |
+| 工作流持久化 | localStorage + 导出/导入 JSON                                                               |
+| 节点类型     | 用户列出的 8 种 + 4 种高阶节点（见下）                                                      |
 
 ---
 
@@ -205,27 +205,27 @@ export function Component(props: NodeProps) { return <NodeShell {...props} meta=
 
 ### 3.1 节点清单（12 种）
 
-| # | 节点 | 输入 | 输出 | 主要参数 | 备注 |
-| --- | --- | --- | --- | --- | --- |
-| 1 | **PromptInput** 提示词输入 | — | `text` | `text`(多行), `enableVarInterpolation`(bool) | 工作流起点之一；输出经 `interpolate()` 注入 `${var}` |
-| 2 | **VariableInput** 变量输入 | — | `text` | `name`(var 名), `value` | 多个 VariableInput 通过名字匹配到 PromptInput 中的 `${name}` |
-| 3 | **TextInput** 文本输入 | — | `text` | `value`(多行) | 与 PromptInput 区别：无变量插值；可作任意文本源 |
-| 4 | **TextCombine** 文本拼接 | `a: text`, `b: text`, `separator` | `text` | `separator` | 解决多 prompt 片段串联 |
-| 5 | **TextGeneration** 文本生成 | `prompt: text*`, `model: text`, `image: image?` | `text` | model, system, temperature, maxTokens, thinking, stream | 流式输出到 RunStore，节点上显示累积文本 |
-| 6 | **ImageGeneration** 图像生成 | `prompt: text*`, `size: size?`, `image: image?[]`, `model: text?` | `image` | model, size, responseFormat(url/b64) | 接到 image[] 即走 I2I；支持参考图多输入（多图合成） |
-| 7 | **VideoGeneration** 视频生成 | `prompt: text*`, `image: image?`, `model: text?` | `video` | model, size, numFrames, fps, mode, negativePrompt, seed | 异步任务，节点显示进度条；完成后输出 `{url, videoId, size, seconds}` |
-| 8 | **ImageInput** 图像输入 | — | `image` | `upload` 按钮, `url`(只读, 上传后回填) | 上传到后端 `/uploads`，返回 URL 写入 data；后端在调图像 API 时再转 base64 |
-| 9 | **SizeSelector** 尺寸选择 | — | `size` | `preset`(下拉), `width`, `height` | preset 含 1024x1024 / 1024x768 / 768x1024 / 1280x720 / 1920x1080 / 1216x832 / 1152x768 / 1088x640 / 自定义 |
-| 10 | **NumberInput** 数字输入 | — | `number` | `value`, `min`, `max`, `step` | 复用：seed、steps、cfg 等 |
-| 11 | **ModelSelector** 模型选择 | — | `text` | `model`(下拉, 按 text/image/video 分组) | 共用节点，连到任意 generation 节点的 `model` 端口 |
-| 12 | **VideoFrameExtract** 视频取帧 | `video: video*` | `image` | `frame`(默认 0, 即首帧), `format`(jpeg/png) | 解码 URL → canvas → blob；典型用例：视频 → 首帧 → ImageGen |
+| #   | 节点                           | 输入                                                              | 输出     | 主要参数                                                | 备注                                                                                                       |
+| --- | ------------------------------ | ----------------------------------------------------------------- | -------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 1   | **PromptInput** 提示词输入     | —                                                                 | `text`   | `text`(多行), `enableVarInterpolation`(bool)            | 工作流起点之一；输出经 `interpolate()` 注入 `${var}`                                                       |
+| 2   | **VariableInput** 变量输入     | —                                                                 | `text`   | `name`(var 名), `value`                                 | 多个 VariableInput 通过名字匹配到 PromptInput 中的 `${name}`                                               |
+| 3   | **TextInput** 文本输入         | —                                                                 | `text`   | `value`(多行)                                           | 与 PromptInput 区别：无变量插值；可作任意文本源                                                            |
+| 4   | **TextCombine** 文本拼接       | `a: text`, `b: text`, `separator`                                 | `text`   | `separator`                                             | 解决多 prompt 片段串联                                                                                     |
+| 5   | **TextGeneration** 文本生成    | `prompt: text*`, `model: text`, `image: image?`                   | `text`   | model, system, temperature, maxTokens, thinking, stream | 流式输出到 RunStore，节点上显示累积文本                                                                    |
+| 6   | **ImageGeneration** 图像生成   | `prompt: text*`, `size: size?`, `image: image?[]`, `model: text?` | `image`  | model, size, responseFormat(url/b64)                    | 接到 image[] 即走 I2I；支持参考图多输入（多图合成）                                                        |
+| 7   | **VideoGeneration** 视频生成   | `prompt: text*`, `image: image?`, `model: text?`                  | `video`  | model, size, numFrames, fps, mode, negativePrompt, seed | 异步任务，节点显示进度条；完成后输出 `{url, videoId, size, seconds}`                                       |
+| 8   | **ImageInput** 图像输入        | —                                                                 | `image`  | `upload` 按钮, `url`(只读, 上传后回填)                  | 上传到后端 `/uploads`，返回 URL 写入 data；后端在调图像 API 时再转 base64                                  |
+| 9   | **SizeSelector** 尺寸选择      | —                                                                 | `size`   | `preset`(下拉), `width`, `height`                       | preset 含 1024x1024 / 1024x768 / 768x1024 / 1280x720 / 1920x1080 / 1216x832 / 1152x768 / 1088x640 / 自定义 |
+| 10  | **NumberInput** 数字输入       | —                                                                 | `number` | `value`, `min`, `max`, `step`                           | 复用：seed、steps、cfg 等                                                                                  |
+| 11  | **ModelSelector** 模型选择     | —                                                                 | `text`   | `model`(下拉, 按 text/image/video 分组)                 | 共用节点，连到任意 generation 节点的 `model` 端口                                                          |
+| 12  | **VideoFrameExtract** 视频取帧 | `video: video*`                                                   | `image`  | `frame`(默认 0, 即首帧), `format`(jpeg/png)             | 解码 URL → canvas → blob；典型用例：视频 → 首帧 → ImageGen                                                 |
 
 ### 3.2 输出节点（2 种）
 
-| # | 节点 | 输入 | 输出 | 主要参数 | 备注 |
-| --- | --- | --- | --- | --- | --- |
-| 13 | **PreviewOutput** 预览输出 | `text: text?`, `image: image?`, `video: video?` | — | `title` | 右侧/底部面板内联渲染：文本/图片/视频播放器 |
-| 14 | **SaveOutput** 保存输出 | `text\|image\|video` | — | `path`(默认 `output/<type>/<id>.<ext>`), `format` | 调 webui 后端 `POST /api/save` 写入磁盘 |
+| #   | 节点                       | 输入                                            | 输出 | 主要参数                                          | 备注                                        |
+| --- | -------------------------- | ----------------------------------------------- | ---- | ------------------------------------------------- | ------------------------------------------- |
+| 13  | **PreviewOutput** 预览输出 | `text: text?`, `image: image?`, `video: video?` | —    | `title`                                           | 右侧/底部面板内联渲染：文本/图片/视频播放器 |
+| 14  | **SaveOutput** 保存输出    | `text\|image\|video`                            | —    | `path`(默认 `output/<type>/<id>.<ext>`), `format` | 调 webui 后端 `POST /api/save` 写入磁盘     |
 
 ### 3.3 端口类型规则
 
@@ -251,15 +251,15 @@ export function Component(props: NodeProps) { return <NodeShell {...props} meta=
 
 基于 `params: { [key]: { kind, default, ... } }` 自动渲染：
 
-| `kind` | 渲染控件 |
-| --- | --- |
-| `string` / `text` / `multiline` | Input / Textarea |
-| `number` | NumberInput，可绑定 NumberInput 节点 |
-| `boolean` | Toggle |
-| `select` / `model` | Select |
-| `size` | SizeSelector 组件 |
-| `enum` | Radio/Segmented |
-| `array` | 动态增删 list |
+| `kind`                          | 渲染控件                             |
+| ------------------------------- | ------------------------------------ |
+| `string` / `text` / `multiline` | Input / Textarea                     |
+| `number`                        | NumberInput，可绑定 NumberInput 节点 |
+| `boolean`                       | Toggle                               |
+| `select` / `model`              | Select                               |
+| `size`                          | SizeSelector 组件                    |
+| `enum`                          | Radio/Segmented                      |
+| `array`                         | 动态增删 list                        |
 
 参数值与端口值合并优先级：**连入端口值 > 参数值 > 默认值**。
 
@@ -473,17 +473,17 @@ SaveOutput 节点调 `POST /api/save`，body = `{ kind, source: { url|dataUri },
 
 ## 11. 实施步骤
 
-| 阶段 | 任务 | 验证 |
-| --- | --- | --- |
-| **0. Core 改造** | 给 `packages/core/package.json` 加 `module`/`exports`；前端可 `import { AgnesClient } from '@agnes/core'` | 跑 `npm run dev:flow` 不报模块解析错 |
-| **1. 脚手架** | 新建 `packages/workflow`，Vite + React 19 + TS + UnoCSS + React Flow；HMR 起得来 | 浏览器打开画布 |
-| **2. 节点外壳** | 实现 `NodeShell`、Handle 组件、`nodeTypes` 注册机制；实现 1 个示例节点 PromptInput | 拖入 PromptInput 到画布并能连线 |
-| **3. 基础生成节点** | TextGeneration、ImageGeneration、VideoGeneration（含 resolver + 异步轮询） | 拖入运行能拿到文本/图片/视频 |
-| **4. 输入/变量节点** | VariableInput、TextInput、SizeSelector、NumberInput、ModelSelector、TextCombine | 拼出 "PromptInput + VariableInput → TextGen" 工作流并运行 |
-| **5. 图片输入/输出** | ImageInput（上传）+ PreviewOutput + SaveOutput；后端 `/api/upload`、`/api/save`、`/api/resolve-image` | 上传图片 → ImageGen（I2I）→ Preview → Save 全链路 |
-| **6. 执行引擎** | 拓扑排序、并行执行、错误冒泡、AbortController、流式输出累积 | 多节点串/并行混合工作流 |
-| **7. 持久化** | localStorage 自动保存 + 命名工作流 + 导出/导入 JSON + 3 个内置示例 | 刷新页面工作流不丢 |
-| **8. 打磨** | 暗色主题、错误边框、节点状态徽章、底部日志面板、API Key 设置抽屉 | 视觉与可用性 review |
+| 阶段                 | 任务                                                                                                      | 验证                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **0. Core 改造**     | 给 `packages/core/package.json` 加 `module`/`exports`；前端可 `import { AgnesClient } from '@agnes/core'` | 跑 `npm run dev:flow` 不报模块解析错                      |
+| **1. 脚手架**        | 新建 `packages/workflow`，Vite + React 19 + TS + UnoCSS + React Flow；HMR 起得来                          | 浏览器打开画布                                            |
+| **2. 节点外壳**      | 实现 `NodeShell`、Handle 组件、`nodeTypes` 注册机制；实现 1 个示例节点 PromptInput                        | 拖入 PromptInput 到画布并能连线                           |
+| **3. 基础生成节点**  | TextGeneration、ImageGeneration、VideoGeneration（含 resolver + 异步轮询）                                | 拖入运行能拿到文本/图片/视频                              |
+| **4. 输入/变量节点** | VariableInput、TextInput、SizeSelector、NumberInput、ModelSelector、TextCombine                           | 拼出 "PromptInput + VariableInput → TextGen" 工作流并运行 |
+| **5. 图片输入/输出** | ImageInput（上传）+ PreviewOutput + SaveOutput；后端 `/api/upload`、`/api/save`、`/api/resolve-image`     | 上传图片 → ImageGen（I2I）→ Preview → Save 全链路         |
+| **6. 执行引擎**      | 拓扑排序、并行执行、错误冒泡、AbortController、流式输出累积                                               | 多节点串/并行混合工作流                                   |
+| **7. 持久化**        | localStorage 自动保存 + 命名工作流 + 导出/导入 JSON + 3 个内置示例                                        | 刷新页面工作流不丢                                        |
+| **8. 打磨**          | 暗色主题、错误边框、节点状态徽章、底部日志面板、API Key 设置抽屉                                          | 视觉与可用性 review                                       |
 
 ---
 
@@ -603,17 +603,17 @@ app.post('/api/save', async (req, res) => {
 
 ## 13. 验证方案
 
-| 场景 | 步骤 | 期望 |
-| --- | --- | --- |
-| 启动 | `npm run dev:flow` | http://localhost:5173 打开画布 |
-| 文本工作流 | 拖入 PromptInput → TextGen → Preview，填提示词点运行 | 节点 success，Preview 显示文本 |
-| 图像工作流 | PromptInput → ImageGen → Preview | Preview 显示生成的图 |
-| I2I | 上传图 → ImageInput → ImageGen(prompt) | Preview 显示基于上传图的新图 |
-| 视频工作流 | PromptInput → VideoGen → Preview | 节点显示进度，结束后 Preview 播放视频 |
-| 变量 | PromptInput(`A ${subject}`) + VariableInput(subject="cat") → TextGen | 文本为 "A cat" |
-| 持久化 | 拖几个节点连线，刷新 | 节点图原样恢复 |
-| 导出/导入 | 导出 JSON → 清空 → 导入 | 节点图完全还原 |
-| 错误处理 | 故意给 TextGen 传非文本端口 | 节点边框变红，错误信息显示在日志 |
+| 场景       | 步骤                                                                 | 期望                                  |
+| ---------- | -------------------------------------------------------------------- | ------------------------------------- |
+| 启动       | `npm run dev:flow`                                                   | http://localhost:5173 打开画布        |
+| 文本工作流 | 拖入 PromptInput → TextGen → Preview，填提示词点运行                 | 节点 success，Preview 显示文本        |
+| 图像工作流 | PromptInput → ImageGen → Preview                                     | Preview 显示生成的图                  |
+| I2I        | 上传图 → ImageInput → ImageGen(prompt)                               | Preview 显示基于上传图的新图          |
+| 视频工作流 | PromptInput → VideoGen → Preview                                     | 节点显示进度，结束后 Preview 播放视频 |
+| 变量       | PromptInput(`A ${subject}`) + VariableInput(subject="cat") → TextGen | 文本为 "A cat"                        |
+| 持久化     | 拖几个节点连线，刷新                                                 | 节点图原样恢复                        |
+| 导出/导入  | 导出 JSON → 清空 → 导入                                              | 节点图完全还原                        |
+| 错误处理   | 故意给 TextGen 传非文本端口                                          | 节点边框变红，错误信息显示在日志      |
 
 ---
 

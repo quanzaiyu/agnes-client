@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "name": "txt2img-demo",
+  "description": "Demo workflow: prompt + size + image gen + preview text",
+  "nodes": [
+    {
+      "id": "prompt1",
+      "type": "promptInput",
+      "position": { "x": 100, "y": 100 },
+      "data": { "params": { "text": "" }, "status": "idle" }
+    },
+    {
+      "id": "size1",
+      "type": "sizeSelector",
+      "position": { "x": 100, "y": 300 },
+      "data": { "params": { "preset": "1024x1024" }, "status": "idle" }
+    },
+    {
+      "id": "imggen1",
+      "type": "imageGeneration",
+      "position": { "x": 500, "y": 150 },
+      "data": { "params": { "model": "agnes-image-2.1-flash" }, "status": "idle" }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "prompt1", "sourceHandle": "text", "target": "imggen1", "targetHandle": "prompt" },
+    { "id": "e2", "source": "size1", "sourceHandle": "size", "target": "imggen1", "targetHandle": "size" }
+  ],
+  "apiInputs": [
+    {
+      "name": "prompt",
+      "target": { "nodeId": "prompt1", "kind": "port", "key": "text" },
+      "required": true
+    },
+    {
+      "name": "size",
+      "target": { "nodeId": "size1", "kind": "port", "key": "size" }
+    }
+  ],
+  "apiOutputs": [
+    {
+      "name": "image",
+      "source": { "nodeId": "imggen1", "kind": "port", "key": "image" }
+    }
+  ]
+}
