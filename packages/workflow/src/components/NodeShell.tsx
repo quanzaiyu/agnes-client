@@ -1,19 +1,17 @@
 /**
  * NodeShell — the visual wrapper used by every node component.
  * Renders: title, status badge, port handles, optional preview body.
+ *
+ * Note: clicking inside the node body should not start dragging the node.
+ * React Flow will only drag from the NodeWrapper root or a designated
+ * dragHandle. We set dragHandle to the title bar by adding a CSS class
+ * `.agnes-node-drag` to the title only, and let React Flow use that.
  */
 
 import { memo, type ReactNode } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Handle, Position, useNodeId } from '@xyflow/react';
 import type { NodeMeta, NodeStatus, Port } from '../engine/types';
 import { useWorkflowStore } from '../store/workflowStore';
-
-interface NodeShellProps {
-  meta: NodeMeta;
-  selected?: boolean;
-  data: { status?: NodeStatus; error?: string; progress?: number; streamText?: string; [k: string]: unknown };
-  children?: ReactNode;
-}
 
 const STATUS_DOT: Record<NodeStatus, string> = {
   idle: 'bg-gray-500',
@@ -38,147 +36,28 @@ const PORT_COLOR: Record<Port['type'], string> = {
   any: '!bg-gray-400',
 };
 
-function NodeShellInner({ meta, selected, data, children }: NodeShellProps) {
-  const status: NodeStatus = data.status || 'idle';
-  const updateParams = useWorkflowStore((s) => s.updateNodeParams);
-  const removeNode = useWorkflowStore((s) => s.removeNode);
-  const selectNode = useWorkflowStore((s) => s.selectNode);
-  // We use props to get nodeId; NodeProps is on the wrapper
-  return (
-    <NodeShellImpl
-      meta={meta}
-      selected={selected}
-      data={data}
-      onDelete={removeNode}
-      onSelect={selectNode}
-    >
-      {children}
-    </NodeShellImpl>
-  );
-}
-
-// Re-export a Props-driven version that has nodeId for handlers.
-interface NodeShellImplProps extends NodeShellProps {
-  onDelete: (id: string) => void;
-  onSelect: (id: string | null) => void;
-}
-
-function NodeShellImpl({ meta, selected, data, onDelete, onSelect, children }: NodeShellImplProps) {
-  // NodeProps injection is via React Flow context; we cannot easily get id here.
-  // The actual delete/select buttons are wired by the wrapper component below.
-  return (
-    <div
-      className={[
-        'rounded-md border bg-surface-raised min-w-[220px] max-w-[320px] shadow-lg',
-        'transition-all',
-        selected ? 'border-primary-500' : 'border-surface-border',
-        STATUS_RING[(data.status as NodeStatus) || 'idle'],
-      ].join(' ')}
-      onClick={() => { /* selection handled by React Flow */ }}
-    >
-      {/* Title bar */}
-      <div className="flex items-center justify-between gap-1.5 px-2 py-1.5 border-b border-surface-border bg-surface-sunken/60 rounded-t-md">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-gray-200 truncate">
-          {meta.icon && <span className={`${meta.icon} text-primary-400`} />}
-          <span>{meta.label}</span>
-          <span className={`inline-block w-1.5 h-1.5 rounded-full ${STATUS_DOT[(data.status as NodeStatus) || 'idle']}`} />
-        </div>
-        <NodeDeleteButton onDelete={onDelete} />
-      </div>
-
-      {/* Input ports */}
-      {meta.inputs.length > 0 && (
-        <div className="px-3 py-1.5 border-b border-surface-border space-y-1.5">
-          {meta.inputs.map((p) => (
-            <div key={p.id} className="relative flex items-center min-h-[18px]">
-              <Handle
-                type="target"
-                position={Position.Left}
-                id={p.id}
-                className={`!w-2.5 !h-2.5 ${PORT_COLOR[p.type]} !border-2 !border-surface-sunken`}
-                style={{ top: 'auto', left: -18, position: 'absolute' }}
-              />
-              <span className="ml-3 text-[11px] text-gray-300">
-                {p.label || p.id}
-                {p.required && <span className="text-red-400">*</span>}
-              </span>
-              <span className="ml-auto text-[10px] text-gray-500 font-mono">{p.type}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Body / preview */}
-      {children && (
-        <div className="px-3 py-2 text-xs text-gray-200 max-h-40 overflow-auto">
-          {children}
-        </div>
-      )}
-
-      {/* Progress bar (for video nodes) */}
-      {typeof data.progress === 'number' && data.progress < 100 && (
-        <div className="px-3 pb-2">
-          <div className="h-1 bg-surface-sunken rounded overflow-hidden">
-            <div className="h-full bg-primary-500 transition-all" style={{ width: `${data.progress}%` }} />
-          </div>
-          <div className="text-[10px] text-gray-500 mt-0.5 text-right">{data.progress}%</div>
-        </div>
-      )}
-
-      {/* Error */}
-      {data.error && (
-        <div className="px-3 pb-2 text-[11px] text-red-400 break-words">
-          {data.error as string}
-        </div>
-      )}
-
-      {/* Output ports */}
-      {meta.outputs.length > 0 && (
-        <div className="px-3 py-1.5 border-t border-surface-border space-y-1.5">
-          {meta.outputs.map((p) => (
-            <div key={p.id} className="relative flex items-center min-h-[18px]">
-              <Handle
-                type="source"
-                position={Position.Right}
-                id={p.id}
-                className={`!w-2.5 !h-2.5 ${PORT_COLOR[p.type]} !border-2 !border-surface-sunken`}
-                style={{ top: 'auto', right: -18, position: 'absolute' }}
-              />
-              <span className="mr-3 ml-auto text-[11px] text-gray-300 text-right">
-                {p.label || p.id}
-              </span>
-              <span className="text-[10px] text-gray-500 font-mono absolute left-2">{p.type}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function NodeDeleteButton({ onDelete }: { onDelete: (id: string) => void }) {
-  // We can't easily get id here. Use a context-aware wrapper below.
-  return null;
-}
-
-/**
- * NodeShell: the actual entry point used by node components.
- * It receives NodeProps from React Flow so it knows the id.
- */
 export const NodeShell = memo(function NodeShell({ meta, children }: { meta: NodeMeta; children?: ReactNode }) {
-  // Use React Flow context indirectly: we'll wrap as a regular component.
-  // Implementation: NodeShellWithProps below is the real implementation.
-  return <NodeShellWithProps meta={meta}>{children}</NodeShellWithProps>;
-});
-
-import { useNodeId } from '@xyflow/react';
-
-function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: ReactNode }) {
   const id = useNodeId()!;
   const node = useWorkflowStore((s) => s.nodes.find((n) => n.id === id));
   const removeNode = useWorkflowStore((s) => s.removeNode);
-  const data = (node?.data || { params: {} }) as { status?: NodeStatus; error?: string; progress?: number; streamText?: string };
+  const data = (node?.data || { params: {} }) as {
+    status?: NodeStatus; error?: string; progress?: number; streamText?: string;
+    varInputs?: Array<{ id: string; name: string }>;
+    varPairs?: Array<{ id: string; name: string; value: string }>;
+  };
   const selected = useWorkflowStore((s) => s.selectedNodeId === id);
+  // Dynamic variable input ports (added via right-click → "添加变量输入")
+  const varInputs = data.varInputs || [];
+  const allInputs: Port[] = [
+    ...meta.inputs,
+    ...varInputs.map((v) => ({ id: `var:${v.id}`, type: 'text' as const, label: `$${v.name}` })),
+  ];
+  // Dynamic output ports (for VariableInput: one per varPair, id=`var:<id>`)
+  const varPairs = data.varPairs || [];
+  const allOutputs: Port[] = [
+    ...meta.outputs,
+    ...varPairs.map((p) => ({ id: `var:${p.id}`, type: 'text' as const, label: `$${p.name}` })),
+  ];
 
   return (
     <div
@@ -188,15 +67,25 @@ function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: Rea
         selected ? 'border-primary-500' : 'border-surface-border',
         STATUS_RING[data.status || 'idle'],
       ].join(' ')}
+      onContextMenu={(e) => {
+        // Allow node to define a custom context menu via window event
+        // (see useNodeContextMenu hook). We dispatch a custom event carrying
+        // the node id, position, and meta. If a handler captures it, the
+        // browser default menu is suppressed.
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('agnes:nodecontext', {
+          detail: { nodeId: id, type: node?.type, x: e.clientX, y: e.clientY, meta },
+        }));
+      }}
     >
-      <div className="flex items-center justify-between gap-1.5 px-2 py-1.5 border-b border-surface-border bg-surface-sunken/60 rounded-t-md">
+      <div className="agnes-node-drag flex items-center justify-between gap-1.5 px-2 py-1.5 border-b border-surface-border bg-surface-sunken/60 rounded-t-md cursor-move">
         <div className="flex items-center gap-1.5 text-xs font-medium text-gray-200 truncate">
           {meta.icon && <span className={meta.icon} />}
           <span>{meta.label}</span>
           <span className={`inline-block w-1.5 h-1.5 rounded-full ${STATUS_DOT[data.status || 'idle']}`} />
         </div>
         <button
-          className="text-gray-500 hover:text-red-400 text-xs px-1"
+          className="text-gray-500 hover:text-red-400 text-xs px-1 cursor-pointer"
           onClick={(e) => { e.stopPropagation(); removeNode(id); }}
           title="删除节点"
         >
@@ -204,9 +93,9 @@ function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: Rea
         </button>
       </div>
 
-      {meta.inputs.length > 0 && (
+      {allInputs.length > 0 && (
         <div className="px-3 py-1.5 border-b border-surface-border space-y-1.5">
-          {meta.inputs.map((p) => (
+          {allInputs.map((p) => (
             <div key={p.id} className="relative flex items-center min-h-[18px]">
               <Handle
                 type="target"
@@ -226,7 +115,7 @@ function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: Rea
       )}
 
       {children && (
-        <div className="px-3 py-2 text-xs text-gray-200 max-h-48 overflow-auto">
+        <div className="px-3 py-2 text-xs text-gray-200 max-h-48 overflow-auto nodrag">
           {children}
         </div>
       )}
@@ -246,9 +135,9 @@ function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: Rea
         </div>
       )}
 
-      {meta.outputs.length > 0 && (
+      {allOutputs.length > 0 && (
         <div className="px-3 py-1.5 border-t border-surface-border space-y-1.5">
-          {meta.outputs.map((p) => (
+          {allOutputs.map((p) => (
             <div key={p.id} className="relative flex items-center min-h-[18px]">
               <Handle
                 type="source"
@@ -267,4 +156,4 @@ function NodeShellWithProps({ meta, children }: { meta: NodeMeta; children?: Rea
       )}
     </div>
   );
-}
+});

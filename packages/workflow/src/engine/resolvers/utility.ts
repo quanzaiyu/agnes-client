@@ -5,22 +5,29 @@
 
 import type { Resolver, PortValue } from '../types';
 
-export const promptInput: Resolver = async (node) => {
+export const promptInput: Resolver = async (node, ctx) => {
   const p = node.data.params || {};
-  const text = (p.text as string) || '';
+  const raw = (p.text as string) || '';
+  // Interpolate ${var} using vars collected from incoming var:xxx edges
+  const text = ctx.interpolate(raw);
   return { text };
 };
 
 export const variableInput: Resolver = async (node) => {
-  const p = node.data.params || {};
-  const name = (p.name as string) || '';
-  const value = (p.value as string) ?? '';
-  return { text: value, __varName: name };
+  const pairs = ((node.data as { varPairs?: Array<{ id: string; name: string; value: string }> }).varPairs) || [];
+  const out: Record<string, PortValue> = {};
+  for (const p of pairs) {
+    out[`var:${p.id}`] = { name: p.name, value: p.value ?? '' } as unknown as PortValue;
+  }
+  return out;
 };
 
-export const textInput: Resolver = async (node) => {
+export const textInput: Resolver = async (node, ctx) => {
   const p = node.data.params || {};
-  return { text: (p.value as string) || '' };
+  // textInput is the no-interpolation sibling of promptInput by design,
+  // but if a user added var:xxx inputs and references, still allow interpolation
+  const raw = (p.value as string) || '';
+  return { text: ctx.variables && Object.keys(ctx.variables).length ? ctx.interpolate(raw) : raw };
 };
 
 export const textCombine: Resolver = async (node, ctx) => {
@@ -114,6 +121,15 @@ export const previewOutput: Resolver = async (node, ctx) => {
   // No outputs
   void text; void image; void video;
   return {};
+};
+
+export const previewText: Resolver = async (node, ctx) => {
+  // previewText simply mirrors the upstream text into its own outputs so
+  // that the node body (which reads from data.outputs.text via zustand)
+  // is consistent with the execution engine. The UI also reads directly
+  // from the upstream node's outputs as a fallback.
+  const text = ctx.resolvePort(node.id, 'text') as string | undefined;
+  return { text: text ?? '' };
 };
 
 export const saveOutput: Resolver = async (node, ctx) => {

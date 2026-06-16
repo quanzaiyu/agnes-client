@@ -109,47 +109,82 @@ export async function executeWorkflow(opts: ExecuteOpts): Promise<void> {
 }
 
 function resolvePortValue(
-  sourceId: string, portId: string,
-  edges: WorkflowEdge[], nodeMap: Map<string, WorkflowNode>,
+  targetNodeId: string, portId: string,
+  edges: WorkflowEdge[], _nodeMap: Map<string, WorkflowNode>,
 ): PortValue {
-  const source = nodeMap.get(sourceId);
-  if (!source?.data.outputs) return undefined;
-  return source.data.outputs[portId] as PortValue | undefined;
+  // Resolve from the live store so we see outputs written by upstream
+  // resolvers (nodeMap is a stale snapshot taken at executeWorkflow entry).
+  const liveNodes = useWorkflowStore.getState().nodes;
+  for (const e of edges) {
+    if (e.target !== targetNodeId) continue;
+    if ((e.targetHandle || '') !== portId) continue;
+    const src = liveNodes.find((n) => n.id === e.source);
+    if (!src?.data.outputs) return undefined;
+    return src.data.outputs[e.sourceHandle || ''] as PortValue | undefined;
+  }
+  return undefined;
 }
 
 function resolveAllUpstream(
-  sourceId: string, portId: string,
-  edges: WorkflowEdge[], nodeMap: Map<string, WorkflowNode>,
+  targetNodeId: string, portId: string,
+  edges: WorkflowEdge[], _nodeMap: Map<string, WorkflowNode>,
 ): PortValue[] {
-  const source = nodeMap.get(sourceId);
-  if (!source?.data.outputs) return [];
-  const v = source.data.outputs[portId] as PortValue | undefined;
-  return v === undefined ? [] : [v];
+  // Live read from store (see resolvePortValue).
+  const liveNodes = useWorkflowStore.getState().nodes;
+  const out: PortValue[] = [];
+  for (const e of edges) {
+    if (e.target !== targetNodeId) continue;
+    if ((e.targetHandle || '') !== portId) continue;
+    const src = liveNodes.find((n) => n.id === e.source);
+    if (!src?.data.outputs) continue;
+    const v = src.data.outputs[e.sourceHandle || ''] as PortValue | undefined;
+    if (v !== undefined) out.push(v);
+  }
+  return out;
 }
 
 function collectVariablesForNode(
   nodeId: string,
   edges: WorkflowEdge[],
-  nodeMap: Map<string, WorkflowNode>,
+  _nodeMap: Map<string, WorkflowNode>,
 ): Record<string, string> {
-  // Strategy: for this node, look at any incoming edge whose source is a
-  // variableInput. Pull its `value` (or default), keyed by `name`.
+  // Use live store snapshot so we see variable node varPairs / upstream
+  // outputs even if they were written by a previous layer.
+  const liveNodes = useWorkflowStore.getState().nodes;
   const vars: Record<string, string> = {};
   for (const e of edges) {
     if (e.target !== nodeId) continue;
-    const src = nodeMap.get(e.source);
+    const src = liveNodes.find((n) => n.id === e.source);
     if (!src) continue;
+    const targetHandle = e.targetHandle || '';
+
+    // 1) VariableInput: each pair's `value` becomes `vars[name]`
     if (src.type === 'variableInput') {
-      const name = (src.data.params.name as string) || '';
-      const value = (src.data.params.value as string) ?? '';
-      if (name) vars[name] = value;
-    } else if (src.type === 'promptInput' && src.data.outputs) {
-      // Also pick up any variables declared inside the prompt text (for hint
-      // purposes; this allows ${name} to be set even without a VariableInput
-      // if the user has filled them in via inlined ${...:-default}).
+      const pairs = ((src.data as { varPairs?: Array<{ id: string; name: string; value: string }> }).varPairs) || [];
+      const sourceHandle = e.sourceHandle || '';
+      if (sourceHandle.startsWith('var:')) {
+        const vid = sourceHandle.slice(4);
+        const p = pairs.find((x) => x.id === vid);
+        if (p?.name) vars[p.name] = p.value ?? '';
+      } else {
+        // Legacy single-pair fallback: edges from variableInput without sourceHandle
+        // pull the first pair.
+        if (pairs[0]?.name) vars[pairs[0].name] = pairs[0].value ?? '';
+      }
+    }
+
+    // 2) PromptInput / TextInput with var:xxx ports (their upstream is VariableInput)
+    //    is already handled above (source is variableInput). But we also need
+    //    to *forward* a PromptInput's collected vars to its downstream consumers
+    //    (so a TextInput that receives a var slot via PromptInput works).
+    //    For now this is implicit because the PromptInput node's output
+    //    `text` is already interpolated before reaching the consumer.
+
+    // 3) Pre-register ${refs} from any upstream promptInput's raw text
+    if (src.type === 'promptInput' && src.data.outputs) {
       const txt = (src.data.outputs.text as string) || '';
       for (const ref of findVarRefs(txt)) {
-        if (!(ref in vars)) vars[ref] = ''; // undeclared, will use default
+        if (!(ref in vars)) vars[ref] = '';
       }
     }
   }

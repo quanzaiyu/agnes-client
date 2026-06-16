@@ -5,7 +5,7 @@ import { videoGeneration } from './video';
 import {
   promptInput, variableInput, textInput, textCombine,
   imageInput, sizeSelector, numberInput, modelSelector,
-  videoFrameExtract, previewOutput, saveOutput,
+  videoFrameExtract, previewOutput, previewText, saveOutput,
 } from './utility';
 
 export const RESOLVERS: Record<string, Resolver> = {
@@ -22,5 +22,6 @@ export const RESOLVERS: Record<string, Resolver> = {
   modelSelector,
   videoFrameExtract,
   previewOutput,
+  previewText,
   saveOutput,
 };

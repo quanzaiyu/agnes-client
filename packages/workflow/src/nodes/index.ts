@@ -16,6 +16,7 @@ import * as numberInput from './numberInput';
 import * as modelSelector from './modelSelector';
 import * as videoFrameExtract from './videoFrameExtract';
 import * as previewOutput from './previewOutput';
+import * as previewText from './previewText';
 import * as saveOutput from './saveOutput';
 import type { NodeMeta } from '../engine/types';
 
@@ -28,7 +29,7 @@ const all: NodeModule[] = [
   promptInput, variableInput, textInput, textCombine,
   textGeneration, imageGeneration, videoGeneration,
   imageInput, sizeSelector, numberInput, modelSelector,
-  videoFrameExtract, previewOutput, saveOutput,
+  videoFrameExtract, previewOutput, previewText, saveOutput,
 ];
 
 export const nodeTypes = Object.fromEntries(

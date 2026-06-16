@@ -1,18 +1,24 @@
 /**
- * React Flow canvas wrapper. Handles drag-from-panel + connect logic.
+ * React Flow canvas wrapper. Handles drag-from-panel + connect + context menu.
+ *
+ * dragHandle is set to `.agnes-node-drag` so the node body (which contains
+ * textareas/inputs) does NOT start dragging. Right-click on a node opens a
+ * context menu (NodeContextMenu) for actions like "add variable input".
  */
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
   type OnSelectionChangeFunc,
+  type NodeMouseHandler,
   BackgroundVariant,
 } from '@xyflow/react';
 import { useWorkflowStore, nodeTypes } from '../store/workflowStore';
-import type { WorkflowNode, WorkflowEdge } from '../engine/types';
+import type { WorkflowNode, WorkflowEdge, NodeMeta } from '../engine/types';
+import { NodeContextMenu } from './NodeContextMenu';
 
 export function FlowCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -23,6 +29,10 @@ export function FlowCanvas() {
   const onConnect = useWorkflowStore((s) => s.onConnect);
   const addNode = useWorkflowStore((s) => s.addNode);
   const selectNode = useWorkflowStore((s) => s.selectNode);
+
+  const [contextMenu, setContextMenu] = useState<{
+    nodeId: string; x: number; y: number; type: string;
+  } | null>(null);
 
   const onDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -48,6 +58,26 @@ export function FlowCanvas() {
     [selectNode],
   );
 
+  // React Flow's onNodeContextMenu is more reliable than DOM events on
+  // child elements. Use it to open our custom menu.
+  const onNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
+    event.preventDefault();
+    setContextMenu({ nodeId: node.id, x: event.clientX, y: event.clientY, type: node.type || '' });
+  }, []);
+
+  // Close menu on outside click / Escape / scroll
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    window.addEventListener('mousedown', close);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('mousedown', close);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [contextMenu]);
+
   return (
     <div ref={containerRef} className="flex-1 h-full relative" onDragOver={onDragOver} onDrop={onDrop}>
       <ReactFlow
@@ -58,7 +88,8 @@ export function FlowCanvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onSelectionChange={onSelection}
-        onPaneClick={() => selectNode(null)}
+        onNodeContextMenu={onNodeContextMenu}
+        onPaneClick={() => { selectNode(null); setContextMenu(null); }}
         fitView
         fitViewOptions={{ padding: 0.2 }}
         defaultEdgeOptions={{ animated: false }}
@@ -80,6 +111,15 @@ export function FlowCanvas() {
           }}
         />
       </ReactFlow>
+      {contextMenu && (
+        <NodeContextMenu
+          nodeId={contextMenu.nodeId}
+          nodeType={contextMenu.type as NodeMeta['type'] | ''}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }

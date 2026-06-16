@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm view *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(node smoke-interactive.mjs)",
+      "Bash(node smoke-final.mjs)"
     ]
   }
 }

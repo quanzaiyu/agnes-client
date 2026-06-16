@@ -106,6 +106,9 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       type,
       position,
       data: { params, status: 'idle' },
+      // Only the title bar (with this class) is draggable. This lets us
+      // embed textareas/inputs in the body without them starting a drag.
+      dragHandle: '.agnes-node-drag',
     };
     set((s) => ({ nodes: [...s.nodes, node] }));
     queueMicrotask(() => saveToStorage({ nodes: get().nodes, edges: get().edges }));

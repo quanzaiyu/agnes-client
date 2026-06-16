@@ -1,9 +1,8 @@
 import { memo } from 'react';
 import { useNodeId } from '@xyflow/react';
 import { NodeShell } from '../components/NodeShell';
-import { TextPreview } from '../components/NodePreview';
 import { useWorkflowStore } from '../store/workflowStore';
-import { renderParamInput } from '../components/ParamInput';
+import { VariablePorts } from './shared/VariablePorts';
 import type { NodeMeta } from '../engine/types';
 
 export const meta: NodeMeta = {
@@ -23,11 +22,23 @@ export const Component = memo(function TextInputNode() {
   const node = useWorkflowStore((s) => s.nodes.find((n) => n.id === id));
   const updateParams = useWorkflowStore((s) => s.updateNodeParams);
   const params = node?.data?.params || {};
+  const varInputs = (node?.data?.varInputs as Array<{ id: string; name: string }> | undefined) || [];
+
   return (
     <NodeShell meta={meta}>
-      <div className="space-y-1">
-        <div className="text-[10px] text-gray-500">内容</div>
-        <TextPreview text={params.value as string} max={140} />
+      <div className="space-y-2">
+        <div>
+          <label className="text-[10px] text-gray-500 block mb-1">内容</label>
+          <textarea
+            className="input-base w-full min-h-[60px] font-mono text-[11px] leading-relaxed nodrag"
+            placeholder={meta.params!.value.placeholder}
+            value={(params.value as string) || ''}
+            onChange={(e) => updateParams(id, { value: e.target.value })}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        <VariablePorts vars={varInputs} />
       </div>
     </NodeShell>
   );
