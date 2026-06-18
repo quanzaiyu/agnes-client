@@ -13,6 +13,7 @@ import { isProd } from './utils/env.js';
 import { setAgnesConfig } from './services/agnes.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import pointsRoutes from './routes/points.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const AVATAR_DIR = path.join(__dirname, 'data/avatars');
@@ -41,6 +42,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/points', pointsRoutes);
 app.use('/avatars', express.static(AVATAR_DIR));
 
 app.use(notFoundHandler);
