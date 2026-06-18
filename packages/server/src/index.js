@@ -8,11 +8,13 @@ import { requestLogger } from './middleware/logger.js';
 import { setJwtSecret } from './middleware/auth.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { isProd } from './utils/env.js';
+import { setAgnesConfig } from './services/agnes.js';
 
 const config = loadServerConfig();
 setDbPath(config.dbPath);
 await initDatabase({ dbPath: config.dbPath });
 
+setAgnesConfig(config.agnesConfig);
 setJwtSecret(config.jwtSecret);
 
 const app = express();
