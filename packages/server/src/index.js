@@ -16,6 +16,7 @@ import userRoutes from './routes/user.js';
 import pointsRoutes from './routes/points.js';
 import textRoutes from './routes/text.js';
 import imageRoutes from './routes/image.js';
+import videoRoutes from './routes/video.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const AVATAR_DIR = path.join(__dirname, 'data/avatars');
@@ -47,6 +48,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/points', pointsRoutes);
 app.use('/api/text', textRoutes);
 app.use('/api/image', imageRoutes);
+app.use('/api/video', videoRoutes);
 app.use('/avatars', express.static(AVATAR_DIR));
 
 app.use(notFoundHandler);

@@ -127,15 +127,24 @@ export class AgnesClient {
   }
 
   /**
+   * Get current status of a single video task (single poll, no waiting).
+   * Returns the raw API response: { id, status, progress, url?, error? }.
+   */
+  async getVideoStatus(videoId) {
+    const { data } = await this.videoHttp.get(
+      `https://apihub.agnes-ai.com/agnesapi?video_id=${videoId}`,
+      { timeout: 15000 }
+    );
+    return data;
+  }
+
+  /**
    * Poll video task status until completed or failed
    */
   async waitForVideo(videoId, { pollInterval = 5000, maxWait = 600000, onProgress } = {}) {
     const start = Date.now();
     while (true) {
-      const { data } = await this.videoHttp.get(
-        `https://apihub.agnes-ai.com/agnesapi?video_id=${videoId}`,
-        { timeout: 15000 }
-      );
+      const data = await this.getVideoStatus(videoId);
 
       if (onProgress) onProgress(data.progress, data.status);
 
