@@ -7,8 +7,12 @@ function bindAll(stmt, params) {
 export function run(sql, ...params) {
   const db = getDb();
   db.run(sql, params);
+  // Capture last_insert_rowid BEFORE saveDatabase, because sql.js's db.export()
+  // (called by saveDatabase) resets internal prepared-statement cursors including
+  // last_insert_rowid. If we queried after export we'd always get 0.
+  const lastInsertRowid = Number(db.exec('SELECT last_insert_rowid()')[0]?.values[0]?.[0] || 0);
   saveDatabaseFromConfig();
-  return { lastInsertRowid: Number(db.exec('SELECT last_insert_rowid()')[0]?.values[0]?.[0] || 0) };
+  return { lastInsertRowid };
 }
 
 export function get(sql, ...params) {
