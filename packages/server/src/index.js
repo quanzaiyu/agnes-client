@@ -9,6 +9,7 @@ import { setJwtSecret } from './middleware/auth.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { isProd } from './utils/env.js';
 import { setAgnesConfig } from './services/agnes.js';
+import authRoutes from './routes/auth.js';
 
 const config = loadServerConfig();
 setDbPath(config.dbPath);
@@ -31,6 +32,8 @@ app.get('/health', (req, res) => {
   const usersCount = getDb().exec('SELECT COUNT(*) as c FROM users')[0]?.values[0]?.[0] || 0;
   res.json({ ok: true, service: '@agnes/server', users: Number(usersCount) });
 });
+
+app.use('/api/auth', authRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
