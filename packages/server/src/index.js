@@ -1,6 +1,8 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { loadServerConfig } from './config.js';
 import { initDatabase, getDb } from './db/index.js';
 import { setDbPath } from './db/repository.js';
@@ -10,6 +12,10 @@ import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { isProd } from './utils/env.js';
 import { setAgnesConfig } from './services/agnes.js';
 import authRoutes from './routes/auth.js';
+import userRoutes from './routes/user.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const AVATAR_DIR = path.join(__dirname, 'data/avatars');
 
 const config = loadServerConfig();
 setDbPath(config.dbPath);
@@ -34,6 +40,8 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/avatars', express.static(AVATAR_DIR));
 
 app.use(notFoundHandler);
 app.use(errorHandler);
