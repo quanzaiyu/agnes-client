@@ -19,6 +19,7 @@ import imageRoutes from './routes/image.js';
 import videoRoutes from './routes/video.js';
 import configRoutes from './routes/config.js';
 import workflowRoutes from './routes/workflow.js';
+import openidRoutes from './routes/openid.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const AVATAR_DIR = path.join(__dirname, 'data/avatars');
@@ -53,6 +54,7 @@ app.use('/api/image', imageRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/workflow', workflowRoutes);
+app.use('/api/openid', openidRoutes);
 app.use('/avatars', express.static(AVATAR_DIR));
 
 app.use(notFoundHandler);
