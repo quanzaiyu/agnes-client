@@ -18,6 +18,7 @@ import textRoutes from './routes/text.js';
 import imageRoutes from './routes/image.js';
 import videoRoutes from './routes/video.js';
 import configRoutes from './routes/config.js';
+import workflowRoutes from './routes/workflow.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const AVATAR_DIR = path.join(__dirname, 'data/avatars');
@@ -51,6 +52,7 @@ app.use('/api/text', textRoutes);
 app.use('/api/image', imageRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/workflow', workflowRoutes);
 app.use('/avatars', express.static(AVATAR_DIR));
 
 app.use(notFoundHandler);
