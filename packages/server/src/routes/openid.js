@@ -16,8 +16,7 @@ router.post('/login', async (req, res, next) => {
     const mockOpenid = `mock_${code}`;
     let user = get('SELECT * FROM users WHERE openid = ?', mockOpenid);
     if (!user) {
-      run('INSERT INTO users (openid, nickname, avatar, points) VALUES (?, ?, ?, 100)', mockOpenid, nickname || '微信用户', avatar || '');
-      const id = get('SELECT last_insert_rowid() as id').id;
+      const { lastInsertRowid: id } = run('INSERT INTO users (openid, nickname, avatar, points) VALUES (?, ?, ?, 100)', mockOpenid, nickname || '微信用户', avatar || '');
       user = { id, openid: mockOpenid, nickname: nickname || '微信用户', avatar: avatar || '', points: 100 };
     }
     const token = jwt.sign({ userId: user.id, openid: user.openid }, JWT_SECRET(), { expiresIn: '7d' });

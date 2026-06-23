@@ -26,8 +26,7 @@ router.post('/register', async (req, res, next) => {
     const exist = get('SELECT id FROM users WHERE username = ? OR email = ?', username, email);
     if (exist) throw new HttpError(400, '用户名或邮箱已被注册');
     const hash = await bcrypt.hash(password, 10);
-    run('INSERT INTO users (username, email, password_hash, points) VALUES (?, ?, ?, 100)', username, email, hash);
-    const id = get('SELECT last_insert_rowid() as id').id;
+    const { lastInsertRowid: id } = run('INSERT INTO users (username, email, password_hash, points) VALUES (?, ?, ?, 100)', username, email, hash);
     const token = sign({ userId: id, username });
     res.cookie('token', token, COOKIE_OPTS);
     res.json({ ok: true, user: { id, username, email, points: 100 } });

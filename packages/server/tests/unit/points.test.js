@@ -36,6 +36,26 @@ test('deduct decreases user points and records log', async () => {
   assert.equal(logs[0].status, 'processing');
 });
 
+// Regression test for A.18: routes/auth.js and routes/openid.js used to call
+//   get('SELECT last_insert_rowid() as id').id AFTER run(), but run()'s saveDatabase
+//   path triggers db.export(), which resets sql.js's last_insert_rowid cursor — so
+//   the follow-up SELECT always returned 0. Correct usage: destructure the
+//   `lastInsertRowid` returned by run() directly.
+test('run() returns lastInsertRowid that survives subsequent get() queries (A.18 regression)', () => {
+  const { lastInsertRowid: id } = run(
+    "INSERT INTO users (username, email, password_hash, points) VALUES (?, ?, ?, 100)",
+    'regress_a18', 'regress_a18@x', 'h'
+  );
+  assert.ok(id > 0, `run() must return lastInsertRowid > 0, got ${id}`);
+
+  // Cross-check via a fresh SELECT — this is what routes used to do (and what
+  // silently returned 0). Asserting here locks in the behavior: the returned
+  // id matches the actual row in the DB.
+  const row = get("SELECT id FROM users WHERE username = 'regress_a18'");
+  assert.ok(row, 'inserted user must be readable');
+  assert.equal(row.id, id, 'run() lastInsertRowid must equal the stored row id');
+});
+
 test('deduct throws HttpError(402) when balance is insufficient', async () => {
   run("INSERT INTO users (username, email, password_hash, points) VALUES (?, ?, ?, 0)", 'poor', 'poor@x', 'h');
   const userId = get("SELECT id FROM users WHERE username = 'poor'").id;
