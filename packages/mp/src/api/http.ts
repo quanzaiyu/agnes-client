@@ -1,6 +1,5 @@
 import { getClientId } from '@/utils/platform';
-
-const BASE = (import.meta.env.VITE_API_BASE as string) || '/api';
+import { BASE } from './http-base';
 
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
