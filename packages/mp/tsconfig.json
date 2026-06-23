@@ -1,0 +1,14 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["@dcloudio/types", "vite/client"]
+  },
+  "vueCompilerOptions": {
+    "plugins": ["vue-macros/volar"]
+  },
+  "include": ["src/**/*", "env.d.ts"]
+}
