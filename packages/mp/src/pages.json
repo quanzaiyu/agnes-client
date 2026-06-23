@@ -1,0 +1,30 @@
+{
+  "easycom": { "autoscan": true, "custom": { "^app-(.*)": "@/components/App$1.vue" } },
+  "pages": [
+    { "path": "pages/index/index", "style": { "navigationBarTitleText": "Agnes", "navigationStyle": "custom" } },
+    { "path": "pages/text/index", "style": { "navigationBarTitleText": "文本生成" } },
+    { "path": "pages/image/index", "style": { "navigationBarTitleText": "图片生成" } },
+    { "path": "pages/video/index", "style": { "navigationBarTitleText": "视频生成" } },
+    { "path": "pages/points/index", "style": { "navigationBarTitleText": "积分" } },
+    { "path": "pages/settings/index", "style": { "navigationBarTitleText": "设置" } },
+    { "path": "pages/profile/index", "style": { "navigationBarTitleText": "我的" } }
+  ],
+  "tabBar": {
+    "color": "#5f5c6e",
+    "selectedColor": "#130e30",
+    "backgroundColor": "#eff2e5",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "iconPath": "static/tab/home.png", "selectedIconPath": "static/tab/home_a.png", "text": "首页" },
+      { "pagePath": "pages/text/index", "iconPath": "static/tab/text.png", "selectedIconPath": "static/tab/text_a.png", "text": "文本" },
+      { "pagePath": "pages/image/index", "iconPath": "static/tab/image.png", "selectedIconPath": "static/tab/image_a.png", "text": "图片" },
+      { "pagePath": "pages/profile/index", "iconPath": "static/tab/me.png", "selectedIconPath": "static/tab/me_a.png", "text": "我的" }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "Agnes",
+    "navigationBarBackgroundColor": "#f9fbf2",
+    "backgroundColor": "#f9fbf2"
+  }
+}
