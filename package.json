@@ -10,7 +10,9 @@
     "dev:tui": "node packages/tui/src/cli.js",
     "dev:flow": "node packages/workflow/server.cjs",
     "dev:server": "node packages/webui/src/server/index.js",
+    "dev:server2": "pnpm --filter @agnes/server dev",
     "dev:frontend": "cd packages/webui/src/frontend && pnpm dev",
+    "build:server2": "pnpm --filter @agnes/server start",
     "build": "cd packages/webui/src/frontend && pnpm build",
     "start": "node packages/webui/src/server/index.js",
     "setup": "pnpm install && cd packages/webui/src/frontend && pnpm install"
